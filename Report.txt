@@ -1,0 +1,7 @@
+Trouble
+- Tidak bisa update barang di menu semua aset yang tersedia
+- Tidak bisa hapus barang di menu semua aset yang tersedia
+- Tidak bisa hapus barang di menu kategori / Data Kategori
+- Kurang menu manajemen user
+- Kurang menu jabatan
+- Kolom Merek, kategori dan harga satuan aset, ketika di update masih bisa berubah

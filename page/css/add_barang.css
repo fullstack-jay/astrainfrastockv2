@@ -1,0 +1,28 @@
+#sku-input-group {
+    display: flex; /* Menggunakan flexbox untuk menyusun elemen secara horizontal */
+    align-items: center; /* Menjaga agar semua elemen tetap di tengah secara vertikal */
+}
+
+#sku-input-group .form-control, #sku-input-group .input-group-addon {
+    margin-right: 5px; /* Memberikan sedikit ruang antar elemen */
+}
+
+#prefix, #middle, #suffix {
+    width: 50px; /* Mengatur lebar untuk setiap input */
+}
+
+.input-group-addon {
+    padding: 6px 12px; /* Padding untuk tanda strip */
+    font-size: 14px; /* Ukuran font untuk tanda strip */
+    font-weight: 400; /* Ketebalan font untuk tanda strip */
+    line-height: 1; /* Tinggi baris untuk tanda strip */
+    color: #555; /* Warna font untuk tanda strip */
+    text-align: center; /* Posisi teks tanda strip */
+    background-color: #eee; /* Warna latar belakang tanda strip */
+    border: 1px solid #ccc; /* Border untuk tanda strip */
+    border-radius: 4px; /* Radius border untuk tanda strip */
+}
+
+.input-group .form-control {
+    border-radius: 4px; /* Radius border untuk input */
+}
