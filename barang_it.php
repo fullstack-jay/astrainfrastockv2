@@ -112,7 +112,7 @@ function confirmDeletion(no) {
                            
        <!-- BOX INFORMASI -->
     <?php
-if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] == 'admin') {?>
+if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user') {?>
 
 
 
@@ -140,20 +140,60 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
 
     </div>
 
-<div class="box-body">
+
+
+<div class="box-body"> 
+     <?php
+if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') {?>
+     <p>
+    <button class="btn btn-primary btn-sm" id="importBtn"><i class="fa fa-upload"></i> Import</button>
+        <form id="importForm" action="import_barang_it.php" method="POST" enctype="multipart/form-data" style="display: none;">
+            <input type="file" id="fileInput" name="file" accept=".xlsx, .xls" required>
+        </form>
+</p>
 <p>
     <a href="add_barang_it" class="btn bg-blue btn-sm"><i class="fa fa-plus"></i> Tambah</a>
     <a href="barang_it?q=stokmin" class="btn bg-orange btn-sm"><i class="fa fa-check"></i> Stok Minimal</a>
     <a href="barang_it" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</a>
 </p>
+<?php } ?>
+
+   <script>
+        document.getElementById('importBtn').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function() {
+            document.getElementById('importForm').submit();
+        });
+    </script>
 <br>
         <?php
     error_reporting(E_ALL ^ E_DEPRECATED);
 
     // Query selalu filter SKU yang dimulai dengan 'ME-'
-    $sql = "SELECT * FROM barang WHERE sku LIKE 'IT-%' ORDER BY no";
+    $sql = "SELECT * FROM barang WHERE kategori LIKE 'IT%' ORDER BY no";
     $result = mysqli_query($conn, $sql);
 ?>       
+
+      <script>
+// Ambil elemen tabel
+var table = document.getElementById('example2');
+
+// Hapus semua baris kecuali header
+while (table.rows.length > 1) {
+    table.deleteRow(1);
+}
+
+// Tambahkan data baru ke dalam tabel
+data.forEach(function(rowData) {
+    var row = table.insertRow();
+    rowData.forEach(function(cellData) {
+        var cell = row.insertCell();
+        cell.textContent = cellData;
+    });
+});
+</script>
                                 <!-- /.box-header -->
                                   <!-- /.Paginasi -->
                             <div class="table-responsive">
@@ -176,20 +216,22 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
                                         </thead>
                       <tbody>
 
+
+
 <?php 
 $no_urut="0";
 while($fill=mysqli_fetch_assoc($result)) {
 ?>
 
                         <tr>
-                      <td><?php echo ++$no_urut;?></td>
+            <td><?php echo ++$no_urut;?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['kategori']); ?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['sku']); ?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['nama']); ?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['brand']); ?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['jenis']); ?></td>
-             <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['sisa'], $decimal, $a_decimal, $thousand).''); ?></td>
-             <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['stokmin'], $decimal, $a_decimal, $thousand).''); ?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['sisa'], $decimal, $a_decimal, $thousand).''); ?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['stokmin'], $decimal, $a_decimal, $thousand).''); ?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['keterangan']); ?></td>
             <td>
                       <?php if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') { ?>
@@ -204,6 +246,7 @@ while($fill=mysqli_fetch_assoc($result)) {
    <?php     }       ?>
                   </tbody></table>
                  
+                                  
 
                                </div>
                                 <!-- /.box-body -->
@@ -218,10 +261,8 @@ while($fill=mysqli_fetch_assoc($result)) {
     <b>Hanya user tertentu yang dapat mengakses halaman <?php echo $dataapa;?> ini .</b>
     </div>
     <?php } ?>
-                 
 
-
-                        <!-- ./col -->
+                    <!-- ./col -->
       
                     </div>
                     <!-- /.row -->
@@ -238,6 +279,8 @@ while($fill=mysqli_fetch_assoc($result)) {
         </div>
         <!-- ./wrapper -->
   
+        <!-- Letakkan di bagian bawah halaman sebelum tag </body> -->
+
 
 <script src="dist/plugins/jQuery/jquery-2.2.3.min.js"></script>
         <script src="dist/plugins/jQuery/jquery-ui.min.js"></script>

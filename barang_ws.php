@@ -104,7 +104,7 @@ function confirmDeletion(no) {
                            
        <!-- BOX INFORMASI -->
     <?php
-if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] == 'admin') {?>
+if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user') {?>
 
 
 
@@ -133,11 +133,30 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
     </div>
 
 <div class="box-body">
+     <?php
+if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') {?>
+     <p>
+    <button class="btn btn-primary btn-sm" id="importBtn"><i class="fa fa-upload"></i> Import</button>
+        <form id="importForm" action="import_barang_ws.php" method="POST" enctype="multipart/form-data" style="display: none;">
+            <input type="file" id="fileInput" name="file" accept=".xlsx, .xls" required>
+        </form>
+</p>
 <p>
     <a href="add_barang_ws" class="btn bg-blue btn-sm"><i class="fa fa-plus"></i> Tambah</a>
     <a href="barang_ws?q=stokmin" class="btn bg-orange btn-sm"><i class="fa fa-check"></i> Stok Minimal</a>
     <a href="barang_ws" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</a>
 </p>
+<?php } ?>
+
+ <script>
+        document.getElementById('importBtn').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function() {
+            document.getElementById('importForm').submit();
+        });
+ </script>
 <br>
                                 <!-- /.box-header -->
                                   <!-- /.Paginasi -->
@@ -145,20 +164,21 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
     error_reporting(E_ALL ^ E_DEPRECATED);
 
     // Query selalu filter SKU yang dimulai dengan 'ME-'
-    $sql = "SELECT * FROM barang WHERE sku LIKE 'WS-%' ORDER BY no";
+    $sql = "SELECT * FROM barang WHERE kategori LIKE 'WS%' ORDER BY no";
     $result = mysqli_query($conn, $sql);
 ?>       
                             <div class="table-responsive">
                                        <table class="table table-bordered table-hover" id="example2" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>
-                                                <th style="width:10px">No</th>
-                                                <th style="width:10%">SKU</th>
-                                                <th>Nama</th>
-                                                <th>Harga Satuan Aset</th>
-                                                <th>Total Aset</th>
-                                                <th>Kategori</th>
+                                                 <th style="width:10px">No</th>
+                                                <th style="width:10%">Kategori</th>
+                                                <th>Kode Aset</th>
+                                                <th>Nama Aset </th>
                                                 <th>Merek</th>
+                                                <th>Jenis</th>
+                                                <th>Sisa Spare </th>
+                                                <th>Minimal Stok </th>
                                                 <th>Keterangan</th>
                                                 <?php   if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') { ?>
                                                 <th>Opsi</th>
@@ -173,13 +193,14 @@ while($fill=mysqli_fetch_assoc($result)) {
 ?>
 
                         <tr>
-                      <td><?php echo ++$no_urut;?></td>
+                       <td><?php echo ++$no_urut;?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, $fill['kategori']); ?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['sku']); ?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['nama']); ?></td>
-            <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['hargasatuanaset'], $decimal, $a_decimal, $thousand).',-'); ?></td>
-             <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['sisa'], $decimal, $a_decimal, $thousand).''); ?></td>
-            <td><?php  echo mysqli_real_escape_string($conn, $fill['kategori']); ?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['brand']); ?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, $fill['jenis']); ?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['sisa'], $decimal, $a_decimal, $thousand).',-'); ?></td>
+             <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['stokmin'], $decimal, $a_decimal, $thousand).''); ?></td>
             <td><?php  echo mysqli_real_escape_string($conn, $fill['keterangan']); ?></td>
             <td>
                       <?php if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') { ?>

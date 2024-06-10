@@ -167,7 +167,7 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
                       move_uploaded_file($tmp, $avatar);
                       $sql1 = "update $tabeldatabase set nama='$nama', nohp='$nohp', alamat='$alamat', tgllahir='$tgllahir', tglaktif='$tglaktif', jabatan='$jabatan',avatar='$avatar' where userna_me='$username'";
                       $updatean = mysqli_query($conn, $sql1);
-                      echo "<script type='text/javascript'>  alert('Berhasil, Data berhasil diupdate!');</script>";
+                      echo "<script tyforwardpagepe='text/javascript'>  alert('Berhasil, Data berhasil diupdate!');</script>";
                        echo "<script type='text/javascript'>window.location = 'admin';</script>";
 
               }else if($chmod >= 3 || $_SESSION['jabatan'] == 'admin'){

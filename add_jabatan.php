@@ -417,8 +417,6 @@ function myFunction() {
 
                           </div>
                            <!-- /.box-body -->
-                       </div>*Jabatan admin dan kassa sudah ditentukan hak aksesnya dan tidak boleh diedit atau hapus
-                    </div>
 
                     <!-- /.row -->
                     <!-- Main row -->

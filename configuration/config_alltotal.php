@@ -183,26 +183,26 @@ $datax4=$row['data'];
   $row=mysqli_fetch_assoc($hasilx2);
   $data15=$row['data'];
 
-  // Prefix yang ingin difilter
-$prefixit = 'IT-';
-// Data Stok dengan filter SKU
-$sqlx2 = "SELECT SUM(sisa) AS data FROM barang WHERE sku LIKE '$prefixit%'";
+ // Data Stok dengan filter kategori yang diawali dengan IT
+$prefixit = 'IT';
+$sqlx2 = "SELECT SUM(sisa) AS data FROM barang WHERE kategori LIKE '$prefixit%'";
 $hasilx2 = mysqli_query($conn, $sqlx2);
 $row = mysqli_fetch_assoc($hasilx2);
 $datait = $row['data'];
 
-$prefixws = 'WS-';
-// Data Stok dengan filter SKU
-$sqlx2 = "SELECT SUM(sisa) AS data FROM barang WHERE sku LIKE '$prefixws%'";
+// Data Stok dengan filter kategori yang diawali dengan WS
+$prefixws = 'WS';
+$sqlx2 = "SELECT SUM(sisa) AS data FROM barang WHERE kategori LIKE '$prefixws%'";
 $hasilx2 = mysqli_query($conn, $sqlx2);
 $row = mysqli_fetch_assoc($hasilx2);
 $dataws = $row['data'];
 
-$prefixme = 'ME-';
-// Data Stok dengan filter SKU
-$sqlx2 = "SELECT SUM(sisa) AS data FROM barang WHERE sku LIKE '$prefixme%'";
+// Data Stok dengan filter kategori yang diawali dengan ME
+$prefixme = 'ME';
+$sqlx2 = "SELECT SUM(sisa) AS data FROM barang WHERE kategori LIKE '$prefixme%'";
 $hasilx2 = mysqli_query($conn, $sqlx2);
 $row = mysqli_fetch_assoc($hasilx2);
 $datame = $row['data'];
+
 
 ?>

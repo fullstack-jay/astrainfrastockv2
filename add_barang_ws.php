@@ -119,7 +119,7 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
       <?php
     error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 
-    $kode=$nama=$hargabeli=$sisa=$hargasatuanaset=$keterangan=$kategori=$deposit=$brand="";
+    $kode=$nama=$asetmasuk=$sisa=$keterangan=$kategori=$brand=$jenis="";
     $no = $_GET["no"];
     $insert = '1';
 
@@ -138,11 +138,11 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
           $sku = $fill["sku"];
           $stokmin = $fill["stokmin"];
           $nama = $fill["nama"];
-          $hargasatuanaset = $fill["hargasatuanaset"];
           $sisa = $fill["sisa"];
           $keterangan = $fill["keterangan"];
           $kategori = $fill["kategori"];
           $brand = $fill["brand"];
+          $jenis = $fill["jenis"];
           $insert = '3';
     }
     }
@@ -162,34 +162,38 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
 
 <div class="row">
     <div class="form-group col-md-6 col-xs-12">
-        <label for="sku" class="col-sm-3 control-label">SKU:</label>
+        <label for="sku" class="col-sm-3 control-label">Kode Aset:</label>
         <div class="col-sm-9">
             <?php if($no == null || $no == ""): ?>
-                <input type="text" class="form-control" id="sku" name="sku" value="WS-" oninput="formatSKU(this)" maxlength="50" required>
+                <input type="number" class="form-control" id="sku" name="sku" placeholder="Masukan Kode Aset" min="100" max="999" required>
             <?php else: ?>
-                <input type="text" class="form-control" id="sku" name="sku" value="<?php echo $sku; ?>" required readonly>
+                <input type="number" class="form-control" id="sku" name="sku" value="<?php echo $sku; ?>" required readonly>
             <?php endif; ?>
         </div>
     </div>
 </div>
 
-        <div class="row">
-           <div class="form-group col-md-6 col-xs-12" >
-                  <label for="nama" class="col-sm-3 control-label">Nama Barang:</label>
-                  <div class="col-sm-9">
-                    <input type="text" class="form-control" id="nama" name="nama" value="<?php echo $nama; ?>" placeholder="Masukan Nama Barang" maxlength="50" required>
-                  </div>
-                </div>
-        </div>
+<script>
+document.getElementById('sku').addEventListener('input', function(e) {
+    if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+    }
+});
+</script>
 
-        <div class="row">
-           <div class="form-group col-md-6 col-xs-12" >
-                  <label for="nama" class="col-sm-3 control-label">Harga Satuan Aset :</label>
-                  <div class="col-sm-9">
-                  <input type="text" class="form-control" id="hargaaset" name="hargasatuanaset" value="<?php echo $hargasatuanaset; ?>" placeholder="Masukan harga aset" maxlength="50" oninput="formatUang(this)">
-                  </div>
-                </div>
+
+          <div class="row">
+    <div class="form-group col-md-6 col-xs-12">
+        <label for="nama" class="col-sm-3 control-label">Nama Barang:</label>
+        <div class="col-sm-9">
+            <?php if($no == null || $no == "") { ?>
+                <input type="text" class="form-control" id="nama" name="nama" value="" placeholder="Masukan Nama Barang" maxlength="50" required>
+            <?php } else { ?>
+                <input type="text" class="form-control" id="nama" name="nama" value="<?php echo $nama; ?>" placeholder="Masukan Nama Barang" maxlength="50" required readonly>
+            <?php } ?>
         </div>
+    </div>
+</div>
 
         <div class="row">
            <div class="form-group col-md-6 col-xs-12" >
@@ -201,60 +205,34 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
         </div>
 
         <div class="row">
-          <div class="form-group col-md-6 col-xs-12">
+    <div class="form-group col-md-6 col-xs-12">
         <label for="kategori" class="col-sm-3 control-label">Kategori:</label>
         <div class="col-sm-9">
-            <select class="form-control select2" style="width: 100%;" name="kategori" required>
-                <option value="">Pilih Kategori</option>
-                <?php
-                $sql = mysqli_query($conn, "SELECT * FROM kategori");
-                while ($row = mysqli_fetch_assoc($sql)) {
-                    // Cek apakah kategori ini adalah kategori dari barang yang di-update
-                    $selected = ($kategori == $row['nama']) ? 'selected' : '';
-                    echo "<option value='" . $row['nama'] . "' $selected>" . $row['nama'] . "</option>";
-                }
-                ?>
-            </select>
+            <input type="text" class="form-control" name="kategori" value="WS" readonly>
         </div>
-                </div>
-
-              <div class="form-group col-md-3 col-xs-6" >
-                  <div class="col-sm-9">
-                    <div class="col-xs-1" align="left">
-          <a href="add_kategori" class="btn btn-info" role="button">Tambah Kategori</a>
-        </div>
-                  </div>
-                </div>
-        </div>
-
-
-         <div class="row">
-          <div class="form-group col-md-6 col-xs-12">
-    <label for="merek" class="col-sm-3 control-label">Merek:</label>
-    <div class="col-sm-9">
-        <select class="form-control select2" style="width: 100%;" name="brand" required>
-            <option value="">Pilih Merek</option>
-            <?php
-            $sql = mysqli_query($conn, "SELECT * FROM brand");
-            while ($row = mysqli_fetch_assoc($sql)) {
-                // Cek apakah merek ini adalah merek dari barang yang di-update
-                $selected = ($brand == $row['nama']) ? 'selected' : '';
-                echo "<option value='" . $row['nama'] . "' $selected>" . $row['nama'] . "</option>";
-            }
-            ?>
-        </select>
     </div>
 </div>
 
 
-                <div class="form-group col-md-3 col-xs-6" >
-                  <div class="col-sm-9">
-                    <div class="col-xs-1" align="left">
-          <a href="add_merek" class="btn btn-info" role="button">Tambah Merek</a>
+         <div class="row">
+          
+                  <div class="form-group col-md-6 col-xs-12">
+            <label for="merek" class="col-sm-3 control-label">Merek:</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="brand" name="brand" value="<?php echo $brand; ?>" placeholder="Masukkan Merek" required>
+            </div>
         </div>
-                  </div>
-                </div>
+</div>
+
+<div class="row">
+          
+                  <div class="form-group col-md-6 col-xs-12">
+            <label for="merek" class="col-sm-3 control-label">Jenis:</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="jenis" name="jenis" value="<?php echo $jenis; ?>" placeholder="Masukkan Jenis" required>
+            </div>
         </div>
+</div>
 
 
           <div class="row">
@@ -303,48 +281,42 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
 <?php
 
 
-   if($_SERVER["REQUEST_METHOD"] == "POST"){
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
+    $sku = mysqli_real_escape_string($conn, $_POST["sku"]);
+    $nama = mysqli_real_escape_string($conn, $_POST["nama"]);
+    $keterangan = mysqli_real_escape_string($conn, $_POST["keterangan"]);
+    $sisa = mysqli_real_escape_string($conn, $_POST["sisa"]);
+    $brand = mysqli_real_escape_string($conn, $_POST["brand"]);
+    $jenis = mysqli_real_escape_string($conn, $_POST["jenis"]);
+    $min = mysqli_real_escape_string($conn, $_POST["stokmin"]);
+    $kategori = mysqli_real_escape_string($conn, $_POST["kategori"]);
+    $insert = ($_POST["insert"]);
 
-          $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
-            $sku = mysqli_real_escape_string($conn, $_POST["sku"]);
-          $nama = mysqli_real_escape_string($conn, $_POST["nama"]);
-          $hargabeli = mysqli_real_escape_string($conn, $_POST["hargabeli"]);
-          $hargasatuanaset = mysqli_real_escape_string($conn, $_POST["hargasatuanaset"]);
-          $keterangan = mysqli_real_escape_string($conn, $_POST["keterangan"]);
-          $sisa = mysqli_real_escape_string($conn, $_POST["sisa"]);
-          $brand = mysqli_real_escape_string($conn, $_POST["brand"]);
-            $min = mysqli_real_escape_string($conn, $_POST["stokmin"]);
-          $kategori = mysqli_real_escape_string($conn, $_POST["kategori"]);
-                        $insert = ($_POST["insert"]);
+    $sql = "SELECT * FROM $tabeldatabase WHERE kode='$kode'";
+    $result = mysqli_query($conn, $sql);
 
-
-             $sql="select * from $tabeldatabase where kode='$kode'";
-        $result=mysqli_query($conn,$sql);
-
-              if(mysqli_num_rows($result)>0){
-          if($chmod >= 3 || $_SESSION['jabatan'] == 'admin'){
-                  $sql1 = "update $tabeldatabase set sku='$sku', nama='$nama', hargasatuanaset='$hargasatuanaset', kategori='$kategori',  stokmin='$min', brand='$brand', keterangan='$keterangan', sisa='$sisa' where kode='$kode'";
-                  $updatean = mysqli_query($conn, $sql1);
-                  echo "<script type='text/javascript'>  alert('Berhasil, Data barang telah diupdate!'); </script>";
-                  echo "<script type='text/javascript'>window.location = '$forwardpage';</script>";
-        }else{
-          echo "<script type='text/javascript'>  alert('Gagal, Data gagal diupdate!'); </script>";
-          echo "<script type='text/javascript'>window.location = '$forwardpage';</script>";
-          }
+    if (mysqli_num_rows($result) > 0) {
+        if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') {
+            $sql1 = "UPDATE $tabeldatabase SET sku='$sku', nama='$nama', kategori='$kategori', stokmin='$min', brand='$brand', keterangan='$keterangan', sisa='$sisa', jenis='$jenis' WHERE kode='$kode'";
+            $updatean = mysqli_query($conn, $sql1);
+            echo "<script>alert('Berhasil, Data barang telah diupdate!');</script>";
+            echo "<script>window.location = '$forwardpage';</script>";
+        } else {
+            echo "<script>alert('Gagal, Data gagal diupdate!');</script>";
+            echo "<script>window.location = '$forwardpage';</script>";
         }
-      else if(( $chmod >= 2 || $_SESSION['jabatan'] == 'admin')){
-
-          $sql2 = "insert into $tabeldatabase values( '$kode','$sku','$nama','$hargasatuanaset','$keterangan','$kategori', ' ',' ','$sisa ',' ','$min','$brand')";
-           if(mysqli_query($conn, $sql2)){
-           echo "<script type='text/javascript'>  alert('Berhasil, Data telah disimpan!'); </script>";
-           echo "<script type='text/javascript'>window.location = '$forwardpage';</script>";
-         }else{
-           echo "<script type='text/javascript'>  alert('Gagal, Data gagal disimpan!'); </script>";
-           echo "<script type='text/javascript'>window.location = '$forwardpage';</script>";
-         }
-           }
-
-  }
+    } else if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
+        $sql2 = "INSERT INTO $tabeldatabase VALUES ('$kode','$sku','$nama','$keterangan','$kategori', ' ', ' ', '$sisa', ' ','$min','$brand','$jenis')";
+        if (mysqli_query($conn, $sql2)) {
+            echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
+            echo "<script>window.location = '$forwardpage';</script>";
+        } else {
+            echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
+            echo "<script>window.location = '$forwardpage';</script>";
+        }
+    }
+}
 
 
          ?>

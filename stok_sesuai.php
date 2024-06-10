@@ -99,7 +99,7 @@ if ($search != null || $search != "") {
 
        <!-- BOX INFORMASI -->
     <?php
-if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') {
+  if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'pic') {
   ?>
 
 
@@ -136,8 +136,7 @@ if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') {
           $asetkeluar = $fill["asetkeluar"];
           $asetmasuk= $fill["asetmasuk"];
           $sisa = $fill["sisa"];
-                  $insert = '3';
-
+          $insert = '3';
     }
     }
     ?>
@@ -145,7 +144,7 @@ if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') {
   <div id="main">
    <div class="container-fluid">
 
-          <form class="form-horizontal" method="post" action="<?php echo $halaman; ?>" id="Myform">
+                <form class="form-horizontal" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" id="Myform">
               <div class="box-body">
 
               <div class="row">
@@ -175,23 +174,15 @@ if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') {
                 </div>
         </div>
 
-        <div class="row">
-           <div class="form-group col-md-6 col-xs-12" >
-                  <label for="asetmasuk" class="col-sm-3 control-label">Aset Masuk :</label>
-                  <div class="col-sm-9">
-                    <input type="text" class="form-control" id="asetmasuk" name="asetmasuk" value="<?php echo $asetmasuk; ?>" placeholder="Masukan Stok Aset Masuk" maxlength="50" onkeyup="sum();">
-                  </div>
-                </div>
+      <div class="row">
+    <div class="form-group col-md-6 col-xs-12">
+        <label for="jumlah_aset" class="col-sm-3 control-label">Jumlah Aset:</label>
+        <div class="col-sm-9">
+            <input type="number" class="form-control" id="jumlah_aset" name="jumlah_aset" value="<?php echo $jumlah_aset; ?>" placeholder="Masukan Jumlah Aset" maxlength="50" onkeyup="sum();">
         </div>
+    </div>
+</div>
 
-        <div class="row">
-           <div class="form-group col-md-6 col-xs-12" >
-                  <label for="terjual" class="col-sm-3 control-label">Aset Keluar :</label>
-                  <div class="col-sm-9">
-                    <input type="text" class="form-control" id="asetkeluar" name="asetkeluar" value="<?php echo $asetkeluar; ?>" placeholder="Masukan Stok Aset Keluar" maxlength="50" onkeyup="sum();">
-                  </div>
-                </div>
-        </div>
 
         <script>
          $("#kode").on("change", function() {
@@ -233,36 +224,102 @@ $(document).ready(function() {
 
               </div>
               <!-- /.box-body -->
-              <div class="box-footer" >
-                <a href="stok_barang" class="btn btn-flat bg-orange"> Kembali </a>
-                <button type="submit" class="btn btn-default btn-flat" name="simpan" onclick="document.getElementById('Myform').submit();" ><span class="glyphicon glyphicon-floppy-disk"></span> Simpan</button>
-              </div>
+<div class="box-footer" style="margin-top: 10px;">
+    <button type="submit" class="btn btn-success btn-flat" name="masuk" onclick="document.getElementById('Myform').submit();" style="margin-right: 10px;"><span class="glyphicon glyphicon-log-in"></span> Aset Masuk</button>
+    <button type="submit" class="btn btn-danger btn-flat" name="keluar" onclick="document.getElementById('Myform').submit();" style="margin-left: 10px;"><span class="glyphicon glyphicon-log-out"></span> Aset Keluar</button>
+</div>
               <!-- /.box-footer -->
  </form>
 </div>
 
 
-    <?php
-
-        if(isset($_POST["simpan"])) {
+ <?php
+if(isset($_POST["masuk"])) {
     $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
-    $asetmasuk = mysqli_real_escape_string($conn, $_POST["asetmasuk"]);
-    $asetkeluar = mysqli_real_escape_string($conn, $_POST["asetkeluar"]);
-    $sisa = mysqli_real_escape_string($conn, $_POST["sisa"]);  // Ambil sisa baru dari form
+    $jumlahAsetBaru = mysqli_real_escape_string($conn, $_POST["jumlah_aset"]);
 
-    // Query untuk memperbarui data
-    $sql = "UPDATE barang SET asetmasuk='$asetmasuk', asetkeluar='$asetkeluar', sisa='$sisa' WHERE kode='$kode'";
+    // Query untuk mendapatkan data awal dari database
+    $sql = "SELECT asetmasuk, asetkeluar, sisa, stokmin FROM barang WHERE kode='$kode'";
     $result = mysqli_query($conn, $sql);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $asetmasukLama = $row['asetmasuk'];
+        $asetkeluarLama = $row['asetkeluar'];
+        $sisaAwal = $row['sisa'];
+        $stokmin = $row['stokmin'];
+        
+        // Hitung jumlah aset baru
+        $jumlahAsetTotal = $jumlahAsetBaru;
 
-    if($result) {
-        echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
-        echo "<script>window.location = 'stok_sesuai';</script>";
+        // Hitung sisa baru setelah penyesuaian
+        $sisaBaru = $sisaAwal + $jumlahAsetBaru;
+
+        // Periksa apakah stok baru setelah penyesuaian kurang dari stokmin
+        if ($sisaBaru < $stokmin) {
+            echo "<script>alert('Stok setelah penyesuaian kurang dari stok minimum!');</script>";
+        } else {
+            // Lanjutkan dengan proses penyimpanan data
+            $sqlUpdate = "UPDATE barang SET asetmasuk=asetmasuk+'$jumlahAsetBaru', sisa='$sisaBaru' WHERE kode='$kode'";
+            $resultUpdate = mysqli_query($conn, $sqlUpdate);
+
+            if ($resultUpdate) {
+                echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
+                echo "<script>window.location = 'stok_sesuai';</script>";
+            } else {
+                echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
+            }
+        }
     } else {
-        echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
+        echo "<script>alert('Gagal mendapatkan data stok awal dan stok minimum!');</script>";
+    }
+}
+?>
+
+<?php 
+if(isset($_POST["keluar"])) {
+    $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
+    $jumlahAsetBaru = mysqli_real_escape_string($conn, $_POST["jumlah_aset"]);
+
+    // Query untuk mendapatkan data awal dari database
+    $sql = "SELECT asetmasuk, asetkeluar, sisa, stokmin FROM barang WHERE kode='$kode'";
+    $result = mysqli_query($conn, $sql);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $asetmasukLama = $row['asetmasuk'];
+        $asetkeluarLama = $row['asetkeluar'];
+        $sisaAwal = $row['sisa'];
+        $stokmin = $row['stokmin'];
+        
+        // Hitung jumlah aset baru
+        $jumlahAsetTotal = $asetkeluarLama + $jumlahAsetBaru; // Menggunakan asetkeluarLama sebagai basis
+
+        // Hitung sisa baru setelah penyesuaian
+        $sisaBaru = $sisaAwal - $jumlahAsetBaru;
+
+        // Periksa apakah stok baru setelah penyesuaian kurang dari stokmin
+        if ($sisaBaru < $stokmin) {
+            echo "<script>alert('Stok setelah penyesuaian kurang dari stok minimum!');</script>";
+        } else {
+            // Lanjutkan dengan proses penyimpanan data
+            $sqlUpdate = "UPDATE barang SET asetkeluar=asetkeluar+'$jumlahAsetBaru', sisa='$sisaBaru' WHERE kode='$kode'";
+            $resultUpdate = mysqli_query($conn, $sqlUpdate);
+
+            if ($resultUpdate) {
+                echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
+                echo "<script>window.location = 'stok_sesuai';</script>";
+            } else {
+                echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
+            }
+        }
+    } else {
+        echo "<script>alert('Gagal mendapatkan data stok awal dan stok minimum!');</script>";
     }
 }
 
-             ?>
+?>
+
 
 <script>
 function myFunction() {
@@ -332,21 +389,21 @@ function sum() {
 }
 </script>
 
-        <script src="dist/bootstrap/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-        <script src="dist/plugins/morris/morris.min.js"></script>
-        <script src="dist/plugins/sparkline/jquery.sparkline.min.js"></script>
-        <script src="dist/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-        <script src="dist/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-        <script src="dist/plugins/knob/jquery.knob.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
-        <script src="dist/plugins/daterangepicker/daterangepicker.js"></script>
-        <script src="dist/plugins/datepicker/bootstrap-datepicker.js"></script>
-        <script src="dist/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-        <script src="dist/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-        <script src="dist/plugins/fastclick/fastclick.js"></script>
-        <script src="dist/js/app.min.js"></script>
-        <script src="dist/js/demo.js"></script>
+    <script src="dist/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="dist/plugins/morris/morris.min.js"></script>
+    <script src="dist/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <script src="dist/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="dist/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="dist/plugins/knob/jquery.knob.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script src="dist/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="dist/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="dist/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="dist/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="dist/plugins/fastclick/fastclick.js"></script>
+    <script src="dist/js/app.min.js"></script>
+    <script src="dist/js/demo.js"></script>
     <script src="dist/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="dist/plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script src="dist/plugins/slimScroll/jquery.slimscroll.min.js"></script>

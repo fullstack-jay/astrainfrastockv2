@@ -1,13 +1,76 @@
 <!DOCTYPE html>
 <html>
-  <link rel="icon" type="image/png" href="page/images/icons/astra.ico"/>
+    <head> 
+
+    <style> 
+/* Tambahkan di dalam file CSS Anda atau di dalam tag <style> di <head> */
+.glow-card-link {
+    text-decoration: none;
+}
+
+.glow-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 2px;
+}
+
+.glow-card.bg-aqua:hover {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+}
+
+.glow-card.bg-yellow:hover {
+    box-shadow: 0 0 30px rgba(255, 255, 0, 0.7);
+}
+
+.glow-card.bg-green:hover {
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.7);
+}
+
+
+.glow-card:after {
+    content: "\f0a6"; /* Icon tangan dari FontAwesome */
+    font-family: FontAwesome;
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    font-size: 80px;
+    color: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s;
+}
+
+.glow-card:hover:after {
+    bottom: 10px;
+    right: 10px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.glow-card .inner {
+    padding: 20px;
+}
+
+.glow-card .icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 50px;
+    color: white; /* Sesuaikan warna icon sesuai kebutuhan */
+}
+
+
+    </style>
+    </head>
+    <link rel="icon" type="image/png" href="page/images/icons/astra.ico"/>
+     <link rel="stylesheet" href="page/css/loading.css">
 <?php
+include "configuration/config_etc.php";
 include "configuration/config_include.php";
 include "configuration/config_alltotal.php";
-include "configuration/config_connect.php";
-
-;encryption();session();connect();head();body();timing();
-//pagination();
+etc();encryption();session();connect();head();body();timing();
+//alltotal();
+pagination();
 ?>
 
 <?php
@@ -23,402 +86,273 @@ exit(0);
 theader();
 menu();
 ?>
+
+<?php
+$decimal ="0";
+$a_decimal =",";
+$thousand =".";
+?>
             <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
                 <section class="content-header">
 </section>
-                <!-- Main content -->
                 <section class="content">
-                    <!-- Small boxes (Stat box) -->
                     <div class="row">
-                        <!-- ./col -->
+                         <div class="col-lg-3 col-xs-6">
+    <!-- small box -->
+    <a href="barang_me.php" class="glow-card-link">
+        <div class="small-box bg-aqua glow-card">
+            <div class="inner">
+                <h3><sup style="font-size: 20px"></sup><?php echo number_format($datame, $decimal, $a_decimal, $thousand).' '; ?>Pcs</h3>
+                <p>Total Stok Aset ME</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+            </div>
+        </div>
+    </a>
+</div>
 
+                                   <!-- ./col -->
+                                   <div class="col-lg-3 col-xs-6">
+                                     <a href="barang_it.php" class="glow-card-link"> 
+                                       <!-- small box -->
+                                       <div class="small-box bg-yellow glow-card">
+                                           <div class="inner">
+                                               <h3><sup style="font-size: 20px"></sup><?php echo number_format($datait, $decimal, $a_decimal, $thousand).' '; ?>Pcs</h3>
+                                               <p>Total Stok Aset IT</p>
+                                           </div>
+                                           <div class="icon">
+                                              <i class="ion ion-stats-bars"></i>
+                                           </div>
+
+                                       </div>
+</a>
+                                   </div>
+                                   <!-- ./col -->
+                    <div class="col-lg-3 col-xs-6">
+                        <a href="barang_ws.php"  class="glow-card-link"> 
+                                       <!-- small box -->
+                                       <div class="small-box bg-green glow-card">
+                                           <div class="inner">
+                                               <h3><sup style="font-size: 20px"></sup><?php echo number_format($dataws, $decimal, $a_decimal, $thousand).' '; ?>Pcs</h3>
+                                               <p>Total Stok Aset WS</p>
+                                           </div>
+                                           <div class="icon">
+                                               <i class="ion ion-stats-bars"></i>
+                                           </div>
+
+                                       </div>
+                                   </div>
+                                   </a>
+                                   <!-- ./col -->
+                  </div>
 <!-- SETTING START-->
 
 <?php
-error_reporting(E_ALL ^ (E_NOTICE | E_WARNING) );
-$halaman = "index"; // halaman
+error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
+include "configuration/config_chmod.php";
+$halaman = ""; // halaman
 $dataapa = "Dashboard"; // data
-$tabeldatabase = "index"; // tabel database
+$tabeldatabase = "barang"; // tabel database
+$chmod = $chmenu4; // Hak akses Menu
 $forward = mysqli_real_escape_string($conn, $tabeldatabase); // tabel database
 $forwardpage = mysqli_real_escape_string($conn, $halaman); // halaman
 $search = $_POST['search'];
 
-$sql = "SELECT * FROM barang WHERE (sku LIKE 'IT-%' OR sku LIKE 'ME-%' OR sku LIKE 'WS-%') AND sisa < 10 ORDER BY no";
-$result = mysqli_query($conn, $sql);
+$query = "SELECT * FROM $tabeldatabase WHERE nama LIKE '%$search%'";
+$result = mysqli_query($conn, $query);
+
+if (!$result) {
+    echo "Gagal menjalankan query: " . mysqli_error($conn);
+    exit;
+}
 
 ?>
 
 <!-- SETTING STOP -->
-
-
-<!-- BREADCRUMB -->
-<div class="col-lg-12">
-<ol class="breadcrumb ">
-<li><a href="#">Dashboard</a></li>
-</ol>
-</div>
-
-<!-- BREADCRUMB -->
-
-                                <!-- /.box-body -->
-
-                        <!-- ./col -->
-
-                </div>
-
-<?php if($_SESSION['jabatan'] !='admin'){}else{ ?>
-                    <div class="row">
-
-                         <div class="col-lg-3 col-xs-6">
-                           <!-- small box -->
-                           <div class="small-box bg-purple">
-                               <div class="inner">
-                                   <h3><?php echo $datax1; ?></h3>
-                                   <p>Karyawan</p>
-                               </div>
-                               <div class="icon">
-                                   <i class="ion ion-person"></i>
-                               </div>
-                                 <a href="admin" class="small-box-footer">Info lengkap <i class="fa fa-arrow-circle-right"></i></a>
-                           </div>
-                       </div>
-
-                     <div class="col-lg-3 col-xs-6">
-                       <!-- small box -->
-                       <div class="small-box bg-blue">
-                           <div class="inner">
-                               <h3><?php echo $datax3; ?></h3>
-                               <p>Kategori</p>
-                           </div>
-                           <div class="icon">
-                               <i class="ion ion-pie-graph"></i>
-                           </div>
-                             <a href="kategori" class="small-box-footer">Info lengkap <i class="fa fa-arrow-circle-right"></i></a>
-                       </div>
-                   </div>
-
-                   <div class="col-lg-3 col-xs-6">
-                     <!-- small box -->
-                     <div class="small-box bg-fuchsia">
-                         <div class="inner">
-                             <h3><?php echo $datax4; ?></h3>
-                             <p>Barang</p>
-                         </div>
-                         <div class="icon">
-                             <i class="ion ion-cube"></i>
-                         </div>
-                           <a href="barang" class="small-box-footer">Info lengkap <i class="fa fa-arrow-circle-right"></i></a>
-                     </div>
-                 </div>
-
-                     </div>
-
-<?php } ?>
-
-<!-- Awal Chart  -->
-
-<div class="row">
-
-     <div class="col-lg-6 col-xs-12 col-sm 12 ">
-<div class="box box-warning box-solid" >
-    <div class="box-header with-border">
-      <h3 class="box-title">Barang Dibawah Stok Minimal</h3>
-    </div>
-    <div class="box-body">
-    <div style="overflow-y: auto; height:300px; ">
-    <table class="table">
-    <thead>
-    <th>Barang</th>
-    <th>Stok</th>
-    </thead>
-    <tbody>
-    <?php
-    while($row=mysqli_fetch_assoc($result)){
-      echo '<tr>';
-      echo '<td>'.$row['sku'].'</td>';
-      echo '<td>'. $row['sisa'].'</td>';
-      echo '</tr>';
-     
-    }   
-    ?>
-    </tbody>
-      </table>
-    </div>
-  </div>
-  </div>
-</div>
-
-<div class="col-lg-6 col-xs-12 col-sm 12">
-      <div class="box box-solid box-success">
 <?php
-
-
-
-
-$stok = mysqli_query($conn, "SELECT sisa FROM barang WHERE sisa>'0' order by kode asc");
-
-
-$barang1      = mysqli_query($conn, "SELECT nama FROM barang WHERE terjual>'0' order by terjual desc");
-$stok1 = mysqli_query($conn, "SELECT terjual FROM barang WHERE terjual>'0' order by terjual desc");
+$decimal ="0";
+$a_decimal =",";
+$thousand =".";
 ?>
 
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
-        
-        <script src="libs/chart.bundle.js"></script>
-        <script>
-          
-            var ctx = document.getElementById("myChart1");
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                     labels: [<?php while ($b = mysqli_fetch_array($barang1)) { echo '"' . $b['nama'] . '",';}?>],
-                    datasets: [{
-                            label: '# stok',
-                            data: [<?php while ($p = mysqli_fetch_array($stok1)) { echo '"' . $p['terjual'] . '",';}?>],
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.9)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(255, 206, 86, 0.8)',
-                                'rgba(75, 192, 192, 0.3)',
-                                'rgba(153, 102, 255, 0.7)',
-                                'rgba(255, 159, 64, 0.3)',
-                                'rgba(255, 99, 132, 0.8)',
-                                'rgba(54, 162, 235, 0.6)',
-                                'rgba(255, 206, 86, 0.8)',
-                                'rgba(75, 192, 192, 0.6)',
-                                'rgba(153, 102, 255, 0.4)',
-                                'rgba(255, 159, 64, 0.7)'
-                            ],
-                            borderColor: [
-                                'rgba(255,99,132,1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)',
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderWidth: 1
-                        }]
-                },
-                options: {
-                    scales: {
+<!-- BREADCRUMB -->
 
+<ol class="breadcrumb ">
+<li><a href="<?php echo $_SESSION['baseurl']; ?>">Dashboard </a></li>
+<li><a href="<?php echo $halaman;?>"><?php echo $dataapa ?></a></li>
 
-                    }
-                }
-            });
-        </script>
-    
-    </div>
-</div>
-</div>
+</ol>
 
-<!-- akhir chart -->
-                <div class="row">
-                <?php if($_SESSION['jabatan'] !='admin'){}else{ ?>
-                <div class="col-lg-6">
-                 <div class="box box-default">
-            <div class="box-header with-border">
-              <h3 class="box-title">Berita Informasi</h3>
-            </div>
-                                <!-- /.box-header -->
+<!-- BREADCRUMB -->
 
-                                <div class="box-body">
-                <div class="table-responsive">
-    <!----------------KONTEN------------------->
-      <?php
-    error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
+<!-- BOX HAPUS BERHASIL -->
 
-      $nama=$avatar=$tanggal=$isi="";
-      if($_SERVER["REQUEST_METHOD"] == "POST"){
-                  $nama = $_SESSION['nama'];
-                  $avatar = $_SESSION['avatar'];
-                  $tanggal = date('Y-m-d');
-                  $isi= $_POST["isi"];
-
-
-    }
-
-         $sql="select * from info";
-                  $hasil2 = mysqli_query($conn,$sql);
-
-
-                  while ($fill = mysqli_fetch_assoc($hasil2)){
-
-          $nama = $fill["nama"];
-                  $avatar = $fill["avatar"];
-                  $tanggal = $fill["tanggal"];
-                  $isi= $fill["isi"];
-
-
-    }
-    ?>
-  <div id="main">
-
-   <div class="container-fluid">
-
-
-  <form method="post" >
-
-
-    <div class="form-group">
-                <textarea class="textarea" name="isi" placeholder="<?php echo $isi;?>" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" value="<?php echo $ketentuane;?>"></textarea>
-
-            </div>
-
-  </div>
-
-    <div class="col-sm-6" >
-<br/>
-    </div>
-    <div class="col-sm-12" align="left">
-  <button type="submit" class="btn btn-default btn-flat" name="simpan"><span class="glyphicon glyphicon-floppy-disk"></span> Simpan</button>
-<br/>
-    </div>
-
-
-
-
-  </form>
-</div>
-<?php
-  if($_SERVER["REQUEST_METHOD"] == "POST"){
-            $id = 1;
-          $nama=  $_SESSION['nama'];
-                  $avatar= $_SESSION['avatar'];
-                  $tanggal = date('Y-m-d');
-                  $isi= $_POST["isi"];
-
-                  if(isset($_POST['simpan'])){
-
-           $sql="select * from info";
-                  $result=mysqli_query($conn,$sql);
-
-              if(mysqli_num_rows($result)>0){
-
-           $sql1 = "update info set nama='$nama', avatar='$avatar',tanggal='$tanggal', isi='$isi' where id='1'";
-             $result = mysqli_query($conn, $sql1);
-
-        }else{
-                $sql1 = "insert into info values('$nama','$tanggal','$isi','$avatar','$id')";
-              $result = mysqli_query($conn, $sql1);
-        }
-          }
-  }
-
-
-         ?>
-
-
-
-    <!-- KONTEN BODY AKHIR -->
-
-                                </div>
-                </div>
-
-  <!-- TIMER -->
-<div id="counter" style="display: none;">3</div>
-<script type="text/javascript">
-function countdown() {
-    var i = document.getElementById('counter');
-    if (parseInt(i.innerHTML)<=0) {
-        $('#loading').hide();
-      clearInterval(counter);
-   resetEverything();
-   recognition.stop();
-    }
-    i.innerHTML = parseInt(i.innerHTML)-1;
-
-}
-setInterval(function(){ countdown(); },1000);
+         <script>
+ window.setTimeout(function() {
+    $("#myAlert").fadeTo(500, 0).slideUp(1000, function(){
+        $(this).remove();
+    });
+}, 5000);
 </script>
-<!-- /.TIMER -->
+
+   <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
+
+     <script>
+function confirmDeletion(no) {
+    Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Data akan dihapus secara permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, hapus!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Tampilkan overlay loading
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            // Lakukan penghapusan data
+            setTimeout(() => {
+                window.location.href = `component/delete/delete_master?no=${no}&forward=<?php echo $forward; ?>&forwardpage=barang_it&chmod=<?php echo $chmod; ?>`;
+                // Sembunyikan overlay loading
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }, 2000); // Delay 2 detik sebelum redirect
+        }
+    });
+}
+</script>
+
+                           
+       <!-- BOX INFORMASI -->
+    <?php
+if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user'  || $_SESSION['jabatan'] == 'pic') {?>
+
+
+
+
+
+<?php
+
+        $sqla="SELECT no, COUNT( * ) AS totaldata FROM $forward";
+        $hasila=mysqli_query($conn,$sqla);
+        $rowa=mysqli_fetch_assoc($hasila);
+        $totaldata=$rowa['totaldata'];
+
+?>
+                           <div class="box">
+            <div class="box-header">
+                <?php
+    // Query untuk menghitung total data dengan kategori yang diawali 'IT'
+    $sqla = "SELECT COUNT(*) AS totaldata FROM $forward WHERE kategori LIKE 'IT%'";
+    $hasila = mysqli_query($conn, $sqla);
+    $rowa = mysqli_fetch_assoc($hasila);
+    $totaldata = $rowa['totaldata'];
+?>
+            <h3 class="box-title"><i class="glyphicon glyphicon-th"></i> <?php echo $dataapa ?>  <span class="label label-default"><?php echo $totaldata; ?></span>
+                    </h3> 
+
+    </div>
+
+
+
+<div class="box-body">
+
+
+   <script>
+        document.getElementById('importBtn').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function() {
+            document.getElementById('importForm').submit();
+        });
+    </script>
+<br>
+       
+
+      <script>
+// Ambil elemen tabel
+var table = document.getElementById('example2');
+
+// Hapus semua baris kecuali header
+while (table.rows.length > 1) {
+    table.deleteRow(1);
+}
+
+// Tambahkan data baru ke dalam tabel
+data.forEach(function(rowData) {
+    var row = table.insertRow();
+    rowData.forEach(function(cellData) {
+        var cell = row.insertCell();
+        cell.textContent = cellData;
+    });
+});
+</script>
+                                <!-- /.box-header -->
+                                  <!-- /.Paginasi -->
+                            <div class="table-responsive">
+                                       <table class="table table-bordered table-hover" id="example2" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:10px">No</th>
+                                                <th style="width:10%">Kategori</th>
+                                                <th>Kode Aset</th>
+                                                <th>Nama Aset </th>
+                                                <th>Merek</th>
+                                                <th>Jenis</th>
+                                                <th>Sisa Spare </th>
+                                                <th>Minimal Stok </th>
+                                                <th>Keterangan</th>
+                                            </tr>
+                                        </thead>
+                      <tbody>
+
+
+
+<?php 
+$no_urut="0";
+while($fill=mysqli_fetch_assoc($result)) {
+?>
+
+                        <tr>
+                      <td><?php echo ++$no_urut;?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, $fill['kategori']); ?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, $fill['sku']); ?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, $fill['nama']); ?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, $fill['brand']); ?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, $fill['jenis']); ?></td>
+             <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['sisa'], $decimal, $a_decimal, $thousand).''); ?></td>
+             <td><?php  echo mysqli_real_escape_string($conn, number_format($fill['stokmin'], $decimal, $a_decimal, $thousand).''); ?></td>
+            <td><?php  echo mysqli_real_escape_string($conn, $fill['keterangan']); ?></td>
+          </tr>
+           
+   <?php     }       ?>
+                  </tbody></table>
+                 
+                                  
+
+                               </div>
                                 <!-- /.box-body -->
-
-                  <div class="overlay" id="loading">  <i class="fa fa-refresh fa-spin"></i></div>
-
-                            </div>
-              </div>
-
-              <?php } ?>
-              <?php if($_SESSION['jabatan'] !='admin'){?>
-              <div class="col-md-12">
-               <?php
-    error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
-
-      $nama=$avatar=$tanggal=$isi="";
-      if($_SERVER["REQUEST_METHOD"] == "POST"){
-                  $nama = $_SESSION['nama'];
-                  $avatar = $_SESSION['avatar'];
-                  $tanggal = date('Y-m-d');
-                  $isi= $_POST["isi"];
-
-
-    }
-
-         $sql="select * from info";
-                  $hasil2 = mysqli_query($conn,$sql);
-
-
-                  while ($fill = mysqli_fetch_assoc($hasil2)){
-
-          $nama = $fill["nama"];
-                  $avatar = $fill["avatar"];
-                  $tanggal = $fill["tanggal"];
-                  $isi= $fill["isi"];
-
-
-    }
-    ?>
-              <?php
-              }else{ ?>
-                    <div class="col-md-6">
-
-              <?php } ?>
-          <!-- Box Comment -->
-          <div class="box box-widget">
-            <div class="box-header with-border">
-              <div class="user-block">
-                <img class="img-circle" src="<?php  echo $avatar; ?>" alt="User Image">
-                <span class="username"><?php  echo $nama; ?></span>
-                <span class="description"><?php echo $tanggal; ?></span>
-              </div>
-              <!-- /.user-block -->
-              <div class="box-tools">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-              <!-- /.box-tools -->
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <!-- post text -->
-              <?php echo $isi; ?>
-
-            </div>
-            <!-- /.box-body -->
-
-          </div>
-          <!-- /.box -->
-        </div>
-
-
-                </div>
-
-
-                                <!-- /.box-body -->
                             </div>
 
-            <!-- BATAS -->
+                          
+                        </div>
+
+<?php } else {?>
+   <div class="callout callout-danger">
+    <h4>Info</h4>
+    <b>Hanya user tertentu yang dapat mengakses halaman <?php echo $dataapa;?> ini .</b>
+    </div>
+    <?php } ?>
+                 
+
+
+                        <!-- ./col -->
+      
                     </div>
                     <!-- /.row -->
                     <!-- Main row -->
@@ -429,34 +363,62 @@ setInterval(function(){ countdown(); },1000);
                 <!-- /.content -->
             </div>
             <!-- /.content-wrapper -->
-                   <?php footer();?>
+           <?php footer();?>
             <div class="control-sidebar-bg"></div>
         </div>
-              <script src="dist/plugins/jQuery/jquery-2.2.3.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+        <!-- ./wrapper -->
+  
+        <!-- Letakkan di bagian bawah halaman sebelum tag </body> -->
+
+
+<script src="dist/plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <script src="dist/plugins/jQuery/jquery-ui.min.js"></script>
+
         <script>
   $.widget.bridge('uibutton', $.ui.button);
 </script>
-        <script src="dist/bootstrap/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-       
-        <script src="dist/plugins/sparkline/jquery.sparkline.min.js"></script>
-        <script src="dist/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-        <script src="dist/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-        <script src="dist/plugins/knob/jquery.knob.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
-        <script src="dist/plugins/daterangepicker/daterangepicker.js"></script>
-        <script src="dist/plugins/datepicker/bootstrap-datepicker.js"></script>
-        <script src="dist/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-        <script src="dist/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-        <script src="dist/plugins/fastclick/fastclick.js"></script>
-        <script src="dist/js/app.min.js"></script>
-        <script src="dist/js/pages/dashboard.js"></script>
-        <script src="dist/js/demo.js"></script>
+    <script src="dist/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="dist/plugins/morris/morris.min.js"></script>
+    <script src="dist/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <script src="dist/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="dist/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="dist/plugins/knob/jquery.knob.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script src="dist/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="dist/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="dist/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="dist/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="dist/plugins/fastclick/fastclick.js"></script>
+    <script src="dist/js/app.min.js"></script>
+    <script src="dist/js/demo.js"></script>
     <script src="dist/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="dist/plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script src="dist/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <script src="dist/plugins/fastclick/fastclick.js"></script>
+    <script src="dist/plugins/select2/select2.full.min.js"></script>
+    <script src="dist/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="dist/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="dist/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="dist/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+    <script src="dist/plugins/iCheck/icheck.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+ <script>
+  $(function () {
+    $("#DataTable").DataTable();
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      "autoWidth": true
+    });
+  });
+</script>
+
 
     </body>
 </html>
