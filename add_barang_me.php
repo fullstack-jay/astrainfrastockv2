@@ -44,20 +44,33 @@ $chmod = $chmenu4; // Hak akses Menu
 $forward = mysqli_real_escape_string($conn, $tabeldatabase); // tabel database
 $forwardpage = mysqli_real_escape_string($conn, $halamanutama); // halaman
 
-
 function autoNumber(){
-  include "configuration/config_connect.php";
-  global $forward;
-  $query = "SELECT MAX(RIGHT(kode, 6)) as max_id FROM $forward ORDER BY kode";
-  $result = mysqli_query($conn,$query);
+  include "configuration/config_connect.php"; // Pastikan koneksi database sesuai dengan konfigurasi Anda
+  global $forward; // Asumsikan $forward berisi nama tabel
+  
+  // Query untuk mengambil kode terbesar dari tabel
+  $query = "SELECT MAX(RIGHT(kode, 3)) as max_id FROM $forward";
+  $result = mysqli_query($conn, $query);
   $data = mysqli_fetch_array($result);
   $id_max = $data['max_id'];
-  $sort_num = (int) substr($id_max, 1, 6);
+  
+  // Jika tidak ada data, mulai dari 0
+  if ($id_max == null) {
+    $id_max = "000";
+  }
+  
+  // Ambil angka terakhir dari kode tersebut
+  $sort_num = (int) $id_max;
+  
+  // Tambahkan 1 pada angka terakhir
   $sort_num++;
-  $new_code = sprintf("%06s", $sort_num);
+  
+  // Format kembali angka tersebut menjadi 3 digit karakter dengan leading zeros
+  $new_code = sprintf("%03s", $sort_num);
+  
+  // Kembalikan kode baru
   return $new_code;
- }
-
+}
 ?>
 
 <?php
@@ -277,7 +290,7 @@ document.getElementById('sku').addEventListener('input', function(e) {
                           <label for="kode" class="col-sm-3 control-label">Stok Minimal di Workshop:</label>
                           <div class="col-sm-9">
                            <?php  if($no == null || $no ==""){ ?>
-                            <input type="text" class="form-control" name="stokmin" value="1" required>
+                            <input type="text" class="form-control" name="stokmin" value="10" required readonly>
                           <?php }else{ ?>
                      <input type="text" class="form-control" name="stokmin" value="<?php echo $stokmin; ?>"  required readonly>
                   <?php } ?>
@@ -344,7 +357,7 @@ document.getElementById('sku').addEventListener('input', function(e) {
             echo "<script>window.location = '$forwardpage';</script>";
         }
     } else if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
-        $sql2 = "INSERT INTO $tabeldatabase VALUES ('$kode','$sku','$nama','$keterangan','$kategori', ' ', ' ', '$sisa', ' ','$min','$brand','$jenis')";
+        $sql2 = "INSERT INTO $tabeldatabase VALUES ('$kode','$sku','$nama','$keterangan','$kategori', ' ', ' ', '$sisa', ' ','$min','$brand','$jenis', ' ')";
         if (mysqli_query($conn, $sql2)) {
             echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
             echo "<script>window.location = '$forwardpage';</script>";

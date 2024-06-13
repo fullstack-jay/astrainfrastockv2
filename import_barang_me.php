@@ -34,33 +34,40 @@ if (isset($_FILES['file']['name'])) {
 
             // Sesuaikan indeks kolom dengan struktur tabel di database, abaikan kolom "No"
             $kategori = mysqli_real_escape_string($conn, $row[1]);
-            $kode_aset = mysqli_real_escape_string($conn, $row[2]);
-            $nama_aset = mysqli_real_escape_string($conn, $row[3]);
-            $merk = mysqli_real_escape_string($conn, $row[4]);
-            $jenis = mysqli_real_escape_string($conn, $row[5]);
-            $stok = mysqli_real_escape_string($conn, $row[6]);
-            $minimal_stok = mysqli_real_escape_string($conn, $row[7]);
-            $sisa_spare = mysqli_real_escape_string($conn, $row[8]);
-            $keterangan = mysqli_real_escape_string($conn, $row[9]);
+            $kode = mysqli_real_escape_string($conn, $row[2]);
+            $kode_aset = mysqli_real_escape_string($conn, $row[3]);
+            $nama_aset = mysqli_real_escape_string($conn, $row[4]);
+            $merk = mysqli_real_escape_string($conn, $row[5]);
+            $jenis = mysqli_real_escape_string($conn, $row[6]);
+            $stok = mysqli_real_escape_string($conn, $row[7]);
+            $minimal_stok = mysqli_real_escape_string($conn, $row[8]);
+            $sisa_spare = mysqli_real_escape_string($conn, $row[9]);
+            $keterangan = mysqli_real_escape_string($conn, $row[10]);
 
-            // Cek apakah SKU dan kategori sudah ada di database
-            $checkQuery = "SELECT COUNT(*) AS count FROM barang WHERE sku='$kode_aset' AND kategori='$kategori'";
+            // Ambil username dari sesi yang sedang aktif
+            $username = $_SESSION['username'];
+
+            // Cek apakah kode dan kategori sudah ada di database
+            $checkQuery = "SELECT COUNT(*) AS count FROM barang WHERE kode='$kode' AND kategori='$kategori'";
             $checkResult = mysqli_query($conn, $checkQuery);
             $checkRow = mysqli_fetch_assoc($checkResult);
 
             if ($checkRow['count'] > 0) {
-                // Jika SKU dan kategori sudah ada, update data
+                // Jika kode dan kategori sudah ada, update data
                 $query = "UPDATE barang SET
+                            sku='$kode_aset',
                             nama='$nama_aset',
                             brand='$merk',
                             jenis='$jenis',
+                            asetmasuk=asetmasuk+'$stok',
                             sisa='$sisa_spare',
                             stokmin='$minimal_stok',
-                            keterangan='$keterangan'
-                          WHERE sku='$kode_aset' AND kategori='$kategori'";
+                            keterangan='$keterangan',
+                            userna_me='$username'
+                          WHERE kode='$kode' AND kategori='$kategori'";
             } else {
-                // Jika SKU dan kategori belum ada, masukkan data baru
-                $query = "INSERT INTO barang (kategori, sku, nama, brand, jenis, sisa, stokmin, keterangan) VALUES ('$kategori', '$kode_aset', '$nama_aset', '$merk', '$jenis', '$sisa_spare', '$minimal_stok', '$keterangan')";
+                // Jika kode dan kategori belum ada, masukkan data baru
+                $query = "INSERT INTO barang (kode, kategori, sku, nama, brand, jenis, asetmasuk, sisa, stokmin, keterangan, userna_me) VALUES ('$kode', '$kategori', '$kode_aset', '$nama_aset', '$merk', '$jenis', '$stok', '$sisa_spare', '$minimal_stok', '$keterangan', '$username')";
             }
 
             mysqli_query($conn, $query);

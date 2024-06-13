@@ -274,9 +274,7 @@ if(isset($_POST["masuk"])) {
         echo "<script>alert('Gagal mendapatkan data stok awal dan stok minimum!');</script>";
     }
 }
-?>
-
-<?php 
+ 
 if(isset($_POST["keluar"])) {
     $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
     $jumlahAsetBaru = mysqli_real_escape_string($conn, $_POST["jumlah_aset"]);
