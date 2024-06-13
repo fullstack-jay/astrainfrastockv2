@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+
   <link rel="icon" type="image/png" href="page/images/icons/astra.ico"/>
 <?php
 include "configuration/config_etc.php";
@@ -233,13 +233,24 @@ $(document).ready(function() {
 </div>
 
 
+
+
  <?php
+session_start(); // Mulai sesi di awal script
+
+// Pastikan pengguna sudah login
+if (!isset($_SESSION['nama'])) {
+    die("Anda harus login untuk melakukan operasi ini.");
+}
+
+$namalengkap = $_SESSION['nama'];
+
 if(isset($_POST["masuk"])) {
     $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
     $jumlahAsetBaru = mysqli_real_escape_string($conn, $_POST["jumlah_aset"]);
 
     // Query untuk mendapatkan data awal dari database
-    $sql = "SELECT asetmasuk, asetkeluar, sisa, stokmin FROM barang WHERE kode='$kode'";
+    $sql = "SELECT asetmasuk, asetkeluar, sisa, stokmin, kategori, brand, jenis FROM barang WHERE kode='$kode'";
     $result = mysqli_query($conn, $sql);
     
     if ($result && mysqli_num_rows($result) > 0) {
@@ -248,6 +259,9 @@ if(isset($_POST["masuk"])) {
         $asetkeluarLama = $row['asetkeluar'];
         $sisaAwal = $row['sisa'];
         $stokmin = $row['stokmin'];
+        $kategori = $row['kategori'];
+        $brand = $row['brand'];
+        $jenis = $row['jenis'];
         
         // Hitung jumlah aset baru
         $jumlahAsetTotal = $jumlahAsetBaru;
@@ -264,6 +278,12 @@ if(isset($_POST["masuk"])) {
             $resultUpdate = mysqli_query($conn, $sqlUpdate);
 
             if ($resultUpdate) {
+                // Masukkan ke tabel transaksiaset
+                $timestamp = date('Y-m-d H:i:s');
+                $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, kategori, brand, jenis, timestamp) 
+                                       VALUES ('$namalengkap', '$kategori', '$brand', '$jenis', '$timestamp')";
+                mysqli_query($conn, $sqlInsertTransaksi);
+
                 echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
                 echo "<script>window.location = 'stok_sesuai';</script>";
             } else {
@@ -280,7 +300,7 @@ if(isset($_POST["keluar"])) {
     $jumlahAsetBaru = mysqli_real_escape_string($conn, $_POST["jumlah_aset"]);
 
     // Query untuk mendapatkan data awal dari database
-    $sql = "SELECT asetmasuk, asetkeluar, sisa, stokmin FROM barang WHERE kode='$kode'";
+    $sql = "SELECT asetmasuk, asetkeluar, sisa, stokmin, kategori, brand, jenis FROM barang WHERE kode='$kode'";
     $result = mysqli_query($conn, $sql);
     
     if ($result && mysqli_num_rows($result) > 0) {
@@ -289,6 +309,9 @@ if(isset($_POST["keluar"])) {
         $asetkeluarLama = $row['asetkeluar'];
         $sisaAwal = $row['sisa'];
         $stokmin = $row['stokmin'];
+        $kategori = $row['kategori'];
+        $brand = $row['brand'];
+        $jenis = $row['jenis'];
         
         // Hitung jumlah aset baru
         $jumlahAsetTotal = $asetkeluarLama + $jumlahAsetBaru; // Menggunakan asetkeluarLama sebagai basis
@@ -305,6 +328,12 @@ if(isset($_POST["keluar"])) {
             $resultUpdate = mysqli_query($conn, $sqlUpdate);
 
             if ($resultUpdate) {
+                // Masukkan ke tabel transaksiaset
+                $timestamp = date('Y-m-d H:i:s');
+                $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, kategori, brand, jenis, timestamp) 
+                                       VALUES ('$namalengkap', '$kategori', '$brand', '$jenis', '$timestamp')";
+                mysqli_query($conn, $sqlInsertTransaksi);
+
                 echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
                 echo "<script>window.location = 'stok_sesuai';</script>";
             } else {
@@ -315,8 +344,10 @@ if(isset($_POST["keluar"])) {
         echo "<script>alert('Gagal mendapatkan data stok awal dan stok minimum!');</script>";
     }
 }
-
 ?>
+
+ 
+
 
 
 <script>

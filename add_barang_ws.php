@@ -198,7 +198,7 @@ document.getElementById('sku').addEventListener('input', function(e) {
 </script>
 
 
-          <div class="row">
+         <div class="row">
     <div class="form-group col-md-6 col-xs-12">
         <label for="nama" class="col-sm-3 control-label">Nama Barang:</label>
         <div class="col-sm-9">
@@ -256,7 +256,7 @@ document.getElementById('sku').addEventListener('input', function(e) {
                           <label for="kode" class="col-sm-3 control-label">Stok Minimal di Workshop:</label>
                           <div class="col-sm-9">
                            <?php  if($no == null || $no ==""){ ?>
-                            <input type="text" class="form-control" name="stokmin" value="1" required>
+                            <input type="text" class="form-control" name="stokmin" value="10" required readonly>
                           <?php }else{ ?>
                      <input type="text" class="form-control" name="stokmin" value="<?php echo $stokmin; ?>"  required readonly>
                   <?php } ?>
@@ -295,47 +295,63 @@ document.getElementById('sku').addEventListener('input', function(e) {
  </form>
 </div>
 <?php
+session_start(); // Memulai sesi di awal skrip
 
+if (!isset($_SESSION['nama'])) {
+    die("Anda harus login untuk melakukan operasi ini.");
+}
 
-  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$namalengkap = $_SESSION['nama']; // Ambil nama dari sesi dan gunakan sebagai nama lengkap
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    include "configuration/config_connect.php"; // Pastikan koneksi database sesuai dengan konfigurasi Anda
+
     $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
     $sku = mysqli_real_escape_string($conn, $_POST["sku"]);
-    $nama = mysqli_real_escape_string($conn, $_POST["nama"]);
+    $nama = mysqli_real_escape_string($conn, strtolower(trim($_POST["nama"]))); // Convert nama barang to lowercase
     $keterangan = mysqli_real_escape_string($conn, $_POST["keterangan"]);
     $sisa = mysqli_real_escape_string($conn, $_POST["sisa"]);
     $brand = mysqli_real_escape_string($conn, $_POST["brand"]);
     $jenis = mysqli_real_escape_string($conn, $_POST["jenis"]);
     $min = mysqli_real_escape_string($conn, $_POST["stokmin"]);
     $kategori = mysqli_real_escape_string($conn, $_POST["kategori"]);
-    $insert = ($_POST["insert"]);
+    $insert = mysqli_real_escape_string($conn, $_POST["insert"]);
 
-    $sql = "SELECT * FROM $tabeldatabase WHERE kode='$kode'";
-    $result = mysqli_query($conn, $sql);
+    // Query untuk memeriksa apakah nama barang sudah ada di database
+    $checkQuery = "SELECT COUNT(*) as count FROM $tabeldatabase WHERE LOWER(nama) = '$nama'";
+    $result = mysqli_query($conn, $checkQuery);
+    $data = mysqli_fetch_array($result);
 
-    if (mysqli_num_rows($result) > 0) {
-        if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') {
-            $sql1 = "UPDATE $tabeldatabase SET sku='$sku', nama='$nama', kategori='$kategori', stokmin='$min', brand='$brand', keterangan='$keterangan', sisa='$sisa', jenis='$jenis' WHERE kode='$kode'";
-            $updatean = mysqli_query($conn, $sql1);
-            echo "<script>alert('Berhasil, Data barang telah diupdate!');</script>";
-            echo "<script>window.location = '$forwardpage';</script>";
-        } else {
-            echo "<script>alert('Gagal, Data gagal diupdate!');</script>";
-            echo "<script>window.location = '$forwardpage';</script>";
-        }
-    } else if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
-        $sql2 = "INSERT INTO $tabeldatabase VALUES ('$kode','$sku','$nama','$keterangan','$kategori', ' ', ' ', '$sisa', ' ','$min','$brand','$jenis')";
-        if (mysqli_query($conn, $sql2)) {
-            echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
-            echo "<script>window.location = '$forwardpage';</script>";
-        } else {
-            echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
-            echo "<script>window.location = '$forwardpage';</script>";
+    if ($data['count'] > 0) {
+        // Nama barang sudah ada
+        echo "<script>alert('Nama barang sudah ada, silakan input barang lain.');</script>";
+        echo "<script>window.history.back();</script>";
+    } else {
+        // Lanjutkan proses penyimpanan data
+        if ($insert == '1') {
+            // Insert data baru
+            $sql = "INSERT INTO $tabeldatabase (kode, sku, nama, keterangan, kategori, sisa, stokmin, brand, jenis, nama_lengkap) VALUES ('$kode', '$sku', '$nama', '$keterangan', '$kategori', '$sisa', '$min', '$brand', '$jenis', '$namalengkap')";
+            if (mysqli_query($conn, $sql)) {
+                echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
+                echo "<script>window.location = '$forwardpage';</script>";
+            } else {
+                echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
+                echo "<script>window.location = '$forwardpage';</script>";
+            }
+        } else if ($insert == '3') {
+            // Update data existing
+            $sql = "UPDATE $tabeldatabase SET sku='$sku', nama='$nama', kategori='$kategori', stokmin='$min', brand='$brand', keterangan='$keterangan', sisa='$sisa', jenis='$jenis', nama_lengkap='$namalengkap' WHERE kode='$kode'";
+            if (mysqli_query($conn, $sql)) {
+                echo "<script>alert('Berhasil, Data barang telah diupdate!');</script>";
+                echo "<script>window.location = '$forwardpage';</script>";
+            } else {
+                echo "<script>alert('Gagal, Data gagal diupdate!');</script>";
+                echo "<script>window.location = '$forwardpage';</script>";
+            }
         }
     }
 }
-
-
-         ?>
+?>
 
 <script>
 function myFunction() {

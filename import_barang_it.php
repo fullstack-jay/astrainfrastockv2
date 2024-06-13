@@ -45,7 +45,7 @@ if (isset($_FILES['file']['name'])) {
             $keterangan = mysqli_real_escape_string($conn, $row[10]);
 
             // Ambil username dari sesi yang sedang aktif
-            $username = $_SESSION['username'];
+            $namalengkap = $_SESSION['nama'];
 
             // Cek apakah kode dan kategori sudah ada di database
             $checkQuery = "SELECT COUNT(*) AS count FROM barang WHERE kode='$kode' AND kategori='$kategori'";
@@ -63,11 +63,11 @@ if (isset($_FILES['file']['name'])) {
                             sisa='$sisa_spare',
                             stokmin='$minimal_stok',
                             keterangan='$keterangan',
-                            userna_me='$username'
+                            nama_lengkap ='$namalengkap'
                           WHERE kode='$kode' AND kategori='$kategori'";
             } else {
                 // Jika kode dan kategori belum ada, masukkan data baru
-                $query = "INSERT INTO barang (kode, kategori, sku, nama, brand, jenis, asetmasuk, sisa, stokmin, keterangan, userna_me) VALUES ('$kode', '$kategori', '$kode_aset', '$nama_aset', '$merk', '$jenis', '$stok', '$sisa_spare', '$minimal_stok', '$keterangan', '$username')";
+                $query = "INSERT INTO barang (kode, kategori, sku, nama, brand, jenis, asetmasuk, sisa, stokmin, keterangan, nama_lengkap) VALUES ('$kode', '$kategori', '$kode_aset', '$nama_aset', '$merk', '$jenis', '$stok', '$sisa_spare', '$minimal_stok', '$keterangan', '$namalengkap')";
             }
 
             mysqli_query($conn, $query);
