@@ -139,6 +139,8 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
 if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') {?>
      <p>
     <button class="btn btn-primary btn-sm" id="importBtn"><i class="fa fa-upload"></i> Import</button>
+     <button id="export-pdf" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
+        <button id="export-excel" class="btn btn-success btn-sm"><i class="fa fa-file-excel-o"></i> Export Excel</button>
         <form id="importForm" action="import_barang_me.php" method="POST" enctype="multipart/form-data" style="display: none;">
             <input type="file" id="fileInput" name="file" accept=".xlsx, .xls" required>
         </form>
