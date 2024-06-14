@@ -136,7 +136,6 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
         </p>
         <p>
             <a href="add_barang_it" class="btn bg-blue btn-sm"><i class="fa fa-plus"></i> Tambah</a>
-            <a href="barang_it?q=stokmin" class="btn bg-orange btn-sm"><i class="fa fa-check"></i> Stok Minimal</a>
             <a href="barang_it" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</a>
         </p>
         <?php } ?>
