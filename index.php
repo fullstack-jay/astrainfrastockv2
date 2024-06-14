@@ -180,8 +180,6 @@ $thousand =".";
 
 <ol class="breadcrumb ">
 <li><a href="<?php echo $_SESSION['baseurl']; ?>">Dashboard </a></li>
-<li><a href="<?php echo $halaman;?>"><?php echo $dataapa ?></a></li>
-
 </ol>
 
 <!-- BREADCRUMB -->

@@ -37,7 +37,7 @@ menu();
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 include "configuration/config_chmod.php";
 $halaman = "stok_sesuai"; // halaman
-$dataapa = "Penyesuaian Stok"; // data
+$dataapa = "Penyesuaian Stok Aset"; // data
 $tabeldatabase = "barang"; // tabel database
 $chmod = $chmenu8; // Hak akses Menu
 $forward = mysqli_real_escape_string($conn, $tabeldatabase); // tabel database
@@ -149,7 +149,7 @@ if ($search != null || $search != "") {
 
               <div class="row">
     <div class="form-group col-md-6 col-xs-12">
-        <label for="kode" class="col-sm-3 control-label">Pilih Barang:</label>
+        <label for="kode" class="col-sm-3 control-label">Pilih Aset:</label>
         <div class="col-sm-9">
             <select class="form-control select2" style="width: 100%;" name="kode" id="kode">
                 <option></option>
@@ -167,7 +167,7 @@ if ($search != null || $search != "") {
 
         <div class="row">
            <div class="form-group col-md-6 col-xs-12" >
-                  <label for="nama" class="col-sm-3 control-label">Nama:</label>
+                  <label for="nama" class="col-sm-3 control-label">Nama Aset:</label>
                   <div class="col-sm-9">
                     <input type="text" class="form-control" id="nama" name="nama" value="<?php echo $nama; ?>" maxlength="100" readonly>
                   </div>

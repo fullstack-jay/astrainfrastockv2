@@ -55,7 +55,7 @@ if ($chmenu7 >= 1 || $_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == '
 if ($chmenu8 >= 1 || $_SESSION["jabatan"] == "admin" || $_SESSION['jabatan'] == 'pic') { ?>
 
     <li>
-    <a href="stok_sesuai"><i class="glyphicon glyphicon-inbox"></i>Penyesuaian Stok</a>
+    <a href="stok_sesuai"><i class="glyphicon glyphicon-inbox"></i>Penyesuaian Stok Aset</a>
 </li>
  <li>
         <a href="histori"><i class="fa fa-history"></i>Histori Transaksi Aset</a>

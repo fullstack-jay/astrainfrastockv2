@@ -79,10 +79,10 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
                             <tr>
                                 <th>No</th>
                                 <th>Nama Lengkap</th>
-                                <th>Nama Barang</th>
+                                <th>Nama Aset</th>
                                 <th>Kategori</th>
                                 <th>Brand</th>
-                                <th>Jenis</th>
+                                <th>Jenis Aset</th>
                                 <th>Aset Masuk</th>
                                 <th>Aset Keluar</th>
                                 <th>Sisa Spare</th>
