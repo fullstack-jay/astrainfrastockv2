@@ -51,7 +51,7 @@ function autoNumber(){
   global $forward; // Asumsikan $forward berisi nama tabel
   
   // Query untuk mengambil kode terbesar dari tabel
-  $query = "SELECT MAX(RIGHT(kode, 3)) as max_id FROM $forward";
+  $query = "SELECT MAX(CAST(RIGHT(kode, 4)AS UNSIGNED)) as max_id FROM $forward";
   $result = mysqli_query($conn, $query);
   $data = mysqli_fetch_array($result);
   $id_max = $data['max_id'];
@@ -68,7 +68,7 @@ function autoNumber(){
   $sort_num++;
   
   // Format kembali angka tersebut menjadi 3 digit karakter dengan leading zeros
-  $new_code = sprintf("%03s", $sort_num);
+  $new_code = sprintf("%04d", $sort_num);
   
   // Kembalikan kode baru
   return $new_code;

@@ -50,14 +50,14 @@ function autoNumber(){
   global $forward; // Asumsikan $forward berisi nama tabel
   
   // Query untuk mengambil kode terbesar dari tabel
-  $query = "SELECT MAX(RIGHT(kode, 3)) as max_id FROM $forward";
+  $query = "SELECT MAX(CAST(RIGHT(kode, 2)AS UNSIGNED)) as max_id FROM $forward";
   $result = mysqli_query($conn, $query);
   $data = mysqli_fetch_array($result);
   $id_max = $data['max_id'];
   
   // Jika tidak ada data, mulai dari 0
   if ($id_max == null) {
-    $id_max = "000";
+    $id_max = "0";
   }
   
   // Ambil angka terakhir dari kode tersebut
@@ -67,7 +67,7 @@ function autoNumber(){
   $sort_num++;
   
   // Format kembali angka tersebut menjadi 3 digit karakter dengan leading zeros
-  $new_code = sprintf("%03s", $sort_num);
+  $new_code = sprintf("%02d", $sort_num);
   
   // Kembalikan kode baru
   return $new_code;
@@ -122,38 +122,6 @@ if ($search != null || $search != "") {
         $(this).remove();
     });
 }, 5000);
-</script>
-
-<script>
-function formatSKU(input) {
-    let value = input.value.toUpperCase(); // Mengubah input menjadi huruf besar
-    // Pastikan "IT-" selalu ada di awal
-    if (!value.startsWith("IT-")) {
-        value = "IT-" + value.replace(/[^A-Z0-9-]/ig, '').replace(/IT-/ig, '');
-    }
-    // Hapus semua karakter selain huruf besar, angka, dan tanda strip
-    value = value.replace(/[^A-Z0-9-]/ig, '');
-
-    // Format otomatis dengan tanda strip setelah "IT-" dan tiga karakter huruf berikutnya
-    if (!/^IT-[A-Z]{3}-/.test(value)) {
-        value = value.replace(/^(IT-[A-Z]{3})/ig, '$1-');
-    }
-
-    // Format otomatis dengan tanda strip setelah tiga karakter huruf dan tiga karakter angka
-    if (!/^IT-[A-Z]{3}-[0-9]{3}$/.test(value)) {
-        value = value.replace(/^(IT-[A-Z]{3}-[0-9]{3})/ig, '$1');
-    }
-
-    // Batasi panjang total karakter menjadi 10 untuk "IT-XXX-XXX"
-    value = value.substring(0, 10);
-
-    // Setelah format "IT-XXX-XXX" tercapai, tidak memperbolehkan karakter tambahan
-    if (/^IT-[A-Z]{3}-[0-9]{3}$/.test(value)) {
-        input.value = value;
-    } else if (value.length < 10) {
-        input.value = value; // Izinkan pengguna untuk terus mengetik sampai format terpenuhi
-    }
-}
 </script>
 
 
@@ -338,7 +306,6 @@ document.getElementById('sku').addEventListener('input', function(e) {
  </form>
 </div>
 <?php
-session_start(); // Memulai sesi di awal skrip
 
 if (!isset($_SESSION['nama'])) {
     die("Anda harus login untuk melakukan operasi ini.");

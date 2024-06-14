@@ -6,6 +6,8 @@ etc(); encryption(); session(); connect();
 require 'vendor/autoload.php'; // Pastikan PhpSpreadsheet sudah terinstal via Composer
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 if (isset($_FILES['file']['name'])) {
     $fileName = $_FILES['file']['name'];
@@ -16,7 +18,20 @@ if (isset($_FILES['file']['name'])) {
 
     if (in_array($fileExtension, $allowedType)) {
         $spreadsheet = IOFactory::load($fileTmpName);
-        $data = $spreadsheet->getActiveSheet()->toArray();
+        $worksheet = $spreadsheet->getActiveSheet();
+
+        // Membaca semua data sebagai teks untuk mencegah hilangnya nol di depan
+        foreach ($worksheet->getRowIterator() as $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+            foreach ($cellIterator as $cell) {
+                if ($cell->getColumn() == 'B' || $cell->getColumn() == 'C') { // Asumsikan kolom kode berada di kolom B dan kategori di kolom C
+                    $cell->setDataType(DataType::TYPE_STRING);
+                }
+            }
+        }
+
+        $data = $worksheet->toArray(null, true, true, true);
 
         // Skip header row
         $isHeader = true;
@@ -28,21 +43,21 @@ if (isset($_FILES['file']['name'])) {
             }
 
             // Validasi apakah baris memiliki data yang valid (misalnya, kolom 1 dan 2 tidak kosong)
-            if (empty($row[1]) || empty($row[2])) {
+            if (empty($row['B']) || empty($row['C'])) {
                 continue;
             }
 
             // Sesuaikan indeks kolom dengan struktur tabel di database, abaikan kolom "No"
-            $kategori = mysqli_real_escape_string($conn, $row[1]);
-            $kode = mysqli_real_escape_string($conn, $row[2]);
-            $kode_aset = mysqli_real_escape_string($conn, $row[3]);
-            $nama_aset = mysqli_real_escape_string($conn, $row[4]);
-            $merk = mysqli_real_escape_string($conn, $row[5]);
-            $jenis = mysqli_real_escape_string($conn, $row[6]);
-            $stok = mysqli_real_escape_string($conn, $row[7]);
-            $minimal_stok = mysqli_real_escape_string($conn, $row[8]);
-            $sisa_spare = mysqli_real_escape_string($conn, $row[9]);
-            $keterangan = mysqli_real_escape_string($conn, $row[10]);
+            $kategori = mysqli_real_escape_string($conn, $row['B']);
+            $kode = mysqli_real_escape_string($conn, $row['C']);
+            $kode_aset = mysqli_real_escape_string($conn, $row['D']);
+            $nama_aset = mysqli_real_escape_string($conn, $row['E']);
+            $merk = mysqli_real_escape_string($conn, $row['F']);
+            $jenis = mysqli_real_escape_string($conn, $row['G']);
+            $stok = mysqli_real_escape_string($conn, $row['H']);
+            $minimal_stok = mysqli_real_escape_string($conn, $row['I']);
+            $sisa_spare = mysqli_real_escape_string($conn, $row['J']);
+            $keterangan = mysqli_real_escape_string($conn, $row['K']);
 
             // Ambil username dari sesi yang sedang aktif
             $namalengkap = $_SESSION['nama'];
@@ -82,4 +97,3 @@ if (isset($_FILES['file']['name'])) {
     echo "File tidak ditemukan.";
 }
 ?>
-
