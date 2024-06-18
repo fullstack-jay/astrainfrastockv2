@@ -85,7 +85,7 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
                                 <th>Jenis Aset</th>
                                 <th>Aset Masuk</th>
                                 <th>Aset Keluar</th>
-                                <th>Sisa Spare</th>
+                                <th>Spare Update</th>
                                 <th>Waktu Update</th>
                             </tr>
                         </thead>

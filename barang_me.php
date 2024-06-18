@@ -97,7 +97,7 @@ function confirmDeletion(no) {
 
 <!-- BOX INFORMASI -->
 <?php
-if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user') {
+if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user' || $_SESSION['jabatan'] == 'pic') {
     $sqla = "SELECT no, COUNT(*) AS totaldata FROM $forward";
     $hasila = mysqli_query($conn, $sqla);
     $rowa = mysqli_fetch_assoc($hasila);
@@ -117,8 +117,6 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
         <?php if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') { ?>
         <p>
             <button class="btn btn-primary btn-sm" id="importBtn"><i class="fa fa-upload"></i> Import</button>
-            <button id="export-pdf" class="btn btn-danger btn-sm" onclick="window.location.href='export_pdf_me.php'"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
-            <button id="export-excel" class="btn btn-success btn-sm" onclick="window.location.href='export_excel.php'"><i class="fa fa-file-excel-o"></i> Export Excel</button>
             <form id="importForm" action="import_barang_me.php" method="POST" enctype="multipart/form-data" style="display: none;">
                 <input type="file" id="fileInput" name="file" accept=".xlsx, .xls" required>
             </form>
@@ -128,7 +126,12 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
             <a href="barang_me" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</a>
         </p>
         <?php } ?>
-
+<?php if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user' || $_SESSION['jabatan'] == 'pic') { ?>
+    <p>
+            <button id="export-pdf" class="btn btn-danger btn-sm" onclick="window.location.href='export_pdf_me.php'"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
+            <button id="export-excel" class="btn btn-success btn-sm" onclick="window.location.href='export_excel.php'"><i class="fa fa-file-excel-o"></i> Export Excel</button>
+        </p>
+        <?php } ?>
         <script>
             document.getElementById('importBtn').addEventListener('click', function() {
                 document.getElementById('fileInput').click();

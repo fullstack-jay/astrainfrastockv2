@@ -52,7 +52,7 @@ if ($chmenu6 >= 1 || $_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == '
 if ($chmenu7 >= 1 || $_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == 'pic') { ?>
 
 <?php } else {}
-if ($chmenu8 >= 1 || $_SESSION["jabatan"] == "admin" || $_SESSION['jabatan'] == 'pic') { ?>
+if ($chmenu8 >= 1 || $_SESSION["jabatan"] == "admin" || $_SESSION['jabatan'] == 'pic' || $_SESSION['jabatan'] == 'user') { ?>
 
     <li>
     <a href="stok_sesuai"><i class="glyphicon glyphicon-inbox"></i>Penyesuaian Stok Aset</a>
