@@ -111,7 +111,7 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
 <div class="box">
     <div class="box-header">
         <?php
-        $sqla = "SELECT COUNT(*) AS totaldata FROM $forward WHERE sku LIKE 'WS-%'";
+        $sqla = "SELECT COUNT(*) AS totaldata FROM $forward WHERE sku LIKE 'WS%'";
         $hasila = mysqli_query($conn, $sqla);
         $rowa = mysqli_fetch_assoc($hasila);
         $totaldata = $rowa['totaldata'];
@@ -127,12 +127,13 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
             </form>
         </p>
         <p>
-            <a href="add_barang_me" class="btn bg-blue btn-sm"><i class="fa fa-plus"></i> Tambah</a>
-            <a href="barang_me" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</a>
+            <a href="add_barang_ws" class="btn bg-blue btn-sm"><i class="fa fa-plus"></i> Tambah</a>
+            <a href="barang_ws" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</a>
+        </p>
         <?php } ?>
 <?php if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user' || $_SESSION['jabatan'] == 'pic') { ?>
-
-            <button id="export-pdf" class="btn btn-danger btn-sm" onclick="window.location.href='export_pdf_me.php'"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
+    <p>
+            <button id="export-pdf" class="btn btn-danger btn-sm" onclick="window.location.href='export_pdf_ws.php'"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
             <button id="export-excel" class="btn btn-success btn-sm" onclick="window.location.href='export_excel.php'"><i class="fa fa-file-excel-o"></i> Export Excel</button>
         </p>
         <?php } ?>

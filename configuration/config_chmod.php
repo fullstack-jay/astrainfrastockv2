@@ -1,5 +1,4 @@
 <?php
-
 		$jabatan = $_SESSION['jabatan'];
 		$chmenu1=$chmenu2=$chmenu3=$chmenu4=$chmenu5=$chmenu6=$chmenu7=$chmenu8=$chmenu9=$chmenu10="";
 		$sqlnya="SELECT * FROM chmenu where userjabatan = '$jabatan'";
@@ -17,6 +16,4 @@
 		$chmenu9=$rownya['menu9'];
 		$chmenu10=$rownya['menu10'];
 	}
-
-
 ?>

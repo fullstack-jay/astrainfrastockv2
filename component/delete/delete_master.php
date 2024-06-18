@@ -10,7 +10,7 @@ $forwardpage = $_GET['forwardpage'];
 ?>
 
 <?php
-if( $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] =='admin' || $_SESSION['jabatan'] == 'guru'){
+if( $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] =='admin'){
 
  $sql = "delete from $forward where no='".$no."'";
  if (mysqli_query($conn, $sql)) {

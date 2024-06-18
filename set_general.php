@@ -396,26 +396,7 @@ else if((($tipeavatar == "image/jpeg" || $tipeavatar == "image/png") && ($ukuran
 
                             <div class="row">
 
- <div class="col-lg-6">
-             <div class="box box-default">
-          <div class="box-header with-border">
-            <h3 class="box-title">Data Aplikasi</h3>
-          </div>
-
-                              <div class="box-body">
-
-                                <h4>Klik Tombol dibawah untuk melakukan reset terhadap data aplikasi, data barang, data transaksi dan data lainnya yang pernah di input user akan dihapus. Reset akan bersifat permanen dan tidak bisa di kembalikan</h4><br>
-
-                                <form method="post" action="set_general">
-          <button name="truncate" type="submit" class="btn btn-danger pull-left">RESET DATA APLIKASI</button>
-        </form>
-
-
-                              </div>
-                            </div>
-
-                          </div>
-                            </div>
+ 
 <!-- TIMER -->
 
 <!-- /.TIMER -->
