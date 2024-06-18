@@ -343,10 +343,6 @@ function myFunction() {
                <button type="button" class="btn btn-danger btn-xs" onclick="window.location.href='component/delete/delete_master?no=<?php echo $fill['no'].'&'; ?>forward=<?php echo "jabatan".'&';?>forwardpage=<?php echo 'add_jabatan'.'&'; ?>chmod=<?php echo $chmod; ?>'">Hapus</button>
 
 
-               <?php  if ($chmod >= 4 || $_SESSION['jabatan'] == 'admin') { ?>
-         <a href="set_chmod?q=<?php echo $fill['nama'];?>" class="btn btn-xs bg-blue">Hak Akses</a>
-           <?php } else {}?>
-
                <?php } else {}
 
 
@@ -393,11 +389,6 @@ function myFunction() {
                <?php  if ($chmod >= 4 || $_SESSION['jabatan'] == 'admin') { ?>
                  <button type="button" class="btn btn-danger btn-xs" onclick="window.location.href='component/delete/delete_master?no=<?php echo $fill['no'].'&'; ?>forward=<?php echo "jabatan".'&';?>forwardpage=<?php echo 'add_jabatan'.'&'; ?>chmod=<?php echo $chmod; ?>'">Hapus</button>
                <?php } else {}?>
-
-                 <?php  if ($chmod >= 4 || $_SESSION['jabatan'] == 'admin') { ?>
-         <a href="set_chmod?q=<?php echo $fill['nama'];?>" class="btn btn-xs bg-blue">Hak Akses</a>
-           <?php } else {}?>
-
       <?php     }?>
 
 
