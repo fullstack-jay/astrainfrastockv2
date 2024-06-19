@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 13 Jun 2024 pada 11.59
+-- Waktu pembuatan: 19 Jun 2024 pada 10.33
 -- Versi server: 10.4.11-MariaDB
 -- Versi PHP: 7.4.1
 
@@ -73,13 +73,12 @@ CREATE TABLE `barang` (
 --
 
 INSERT INTO `barang` (`kode`, `sku`, `nama`, `keterangan`, `kategori`, `asetmasuk`, `asetkeluar`, `sisa`, `no`, `stokmin`, `brand`, `jenis`, `nama_lengkap`) VALUES
-('1', '001', 'PRINTER', 'contoh', 'IT', 20, 0, 12, 104, 10, 'HP', 'L1250', 'Rizqi Reza Ardiansya'),
-('002', '002', 'HARDDISK', 'contoh', 'IT', 25, 0, 14, 105, 10, 'SEAGATE', '1 TB', 'Rizqi Reza Ardiansya'),
-('001', '001', 'LAMPU PJU', 'contoh', 'ME', 50, 0, 30, 106, 15, 'PHILIPS', 'LED 100 WATT ubah', 'Rizqi Reza Ardiansya'),
-('002', '002', 'KABEL POWER', 'satuan roll meter (50)', 'ME', 30, 0, 12, 107, 10, 'ETERNA', 'NYY', 'Rizqi Reza Ardiansya'),
-('003', '003', 'KABEL TAMBAHAN', 'satuan gaktau', 'ME', 20, 0, 20, 108, 10, 'ETERNA', 'NYO', 'Rizqi Reza Ardiansya'),
-('001', '001', 'PALANG ALB', 'contoh', 'WS', 20, 0, 16, 109, 12, 'TRANSPEED', 'CARBON', 'Rizqi Reza Ardiansya'),
-('002', '002', 'BLOWER', 'contoh', 'WS', 25, 0, 12, 110, 11, 'MAKITA', 'POLYTRON', 'Rizqi Reza Ardiansya');
+('01', '01', 'PRINTER', 'contoh', 'IT', 74, 17, 49, 158, 10, 'HP', 'L1250', 'Rizqi Reza Ardiansya'),
+('02', '02', 'HARDDISK', 'contoh', 'IT', 42, 4, 27, 159, 10, 'SEAGATE', '1 TB', 'Rizqi Reza Ardiansya'),
+('0001', '0001', 'PALANG ALB', 'contoh', 'WS', 24, 4, 16, 160, 12, 'TRANSPEED', 'CARBON', 'Rizqi Reza Ardiansya'),
+('0002', '0002', 'BLOWER', 'contoh', 'WS', 33, 0, 20, 161, 11, 'MAKITA', 'POLYTRON', 'Rizqi Reza Ardiansya'),
+('001', '001', 'LAMPU PJU', 'contoh', 'ME', 50, 0, 30, 162, 15, 'PHILIPS', 'LED 100 WATT ubah', 'Rizqi Reza Ardiansya'),
+('002', '002', 'KABEL POWER', 'satuan roll meter (50)', 'ME', 30, 0, 12, 163, 10, 'ETERNA', 'NYY', 'Rizqi Reza Ardiansya');
 
 -- --------------------------------------------------------
 
@@ -181,10 +180,7 @@ CREATE TABLE `chmenu` (
 --
 
 INSERT INTO `chmenu` (`userjabatan`, `menu1`, `menu2`, `menu3`, `menu4`, `menu5`, `menu6`, `menu7`, `menu8`, `menu9`, `menu10`, `menu11`) VALUES
-('admin', '2', '4', '0', '0', '0', '0', '0', '0', '0', '0', '0'),
-('demo', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', ''),
-('kassa', '0', '3', '0', '0', '0', '5', '5', '2', '0', '0', ''),
-('Staff', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '');
+('admin', '2', '4', '0', '0', '0', '0', '0', '0', '0', '0', '0');
 
 -- --------------------------------------------------------
 
@@ -369,8 +365,17 @@ CREATE TABLE `transaksiaset` (
   `jenis` varchar(50) DEFAULT NULL,
   `asetmasuk` int(11) NOT NULL,
   `asetkeluar` int(11) NOT NULL,
-  `timestamp` datetime DEFAULT NULL
+  `sisa` int(11) NOT NULL,
+  `timestamp` datetime DEFAULT NULL,
+  `image_data` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `transaksiaset`
+--
+
+INSERT INTO `transaksiaset` (`id`, `nama_lengkap`, `nama_barang`, `kategori`, `brand`, `jenis`, `asetmasuk`, `asetkeluar`, `sisa`, `timestamp`, `image_data`) VALUES
+(75, 'Rizqi Reza Ardiansyah', 'PRINTER', 'IT', 'HP', 'L1250', 2, 0, 49, '2024-06-19 15:30:31', './dist/img/gambaraset/e147d8626ea0b0eee5aabd6ee92b6d0e.jpg');
 
 -- --------------------------------------------------------
 
@@ -449,7 +454,7 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`userna_me`, `pa_ssword`, `nama`, `alamat`, `nohp`, `tgllahir`, `tglaktif`, `jabatan`, `avatar`, `no`) VALUES
 ('admin1', '90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad', 'Rizqi Reza Ardiansyah', 'Villa Balaraja Blok L3 No.06 RT/RW 001/006 Desa Saga Kecamatan Balaraja Kabuaten Tangerang. Banten', '085156811979', '2000-06-04', '2024-05-11', 'admin', 'dist/upload/reza.jfif', 1),
-('rizqi', '1966f97de20468962d927389663be5b086e14056', 'Irza', 'Villa Balaraja Blok L3 No.06 RT/RW 001/006 Desa Saga Kecamatan Balaraja Kabuaten Tangerang. Banten', '085156811979', '2017-06-04', '2024-06-13', 'pic', 'dist/upload/index.jpg', 26),
+('rizqi', 'a0e056ac5850b9aab92a6ca7787d9a27b535d5c2', 'Irza', 'Villa Balaraja Blok L3 No.06 RT/RW 001/006 Desa Saga Kecamatan Balaraja Kabuaten Tangerang. Banten', '085156811979', '2017-06-04', '2024-06-13', 'pic', 'dist/upload/index.jpg', 26),
 ('Saefudin', 'f1ca877f0ba9016793684cf3548c21b1fa9eadc5', 'Saefudin Maulana', 'Villa Balaraja Blok L3 No.06 RT/RW 001/006 Desa Saga Kecamatan Balaraja Kabuaten Tangerang. Banten', '0851232323', '0000-00-00', '2024-06-10', 'user', 'dist/upload/index.jpg', 27);
 
 --
@@ -466,7 +471,8 @@ ALTER TABLE `backset`
 -- Indeks untuk tabel `barang`
 --
 ALTER TABLE `barang`
-  ADD PRIMARY KEY (`no`);
+  ADD PRIMARY KEY (`no`),
+  ADD KEY `kode` (`kode`);
 
 --
 -- Indeks untuk tabel `bayar`
@@ -587,7 +593,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT untuk tabel `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `no` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `no` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
 
 --
 -- AUTO_INCREMENT untuk tabel `bayar`
@@ -641,7 +647,7 @@ ALTER TABLE `supplier`
 -- AUTO_INCREMENT untuk tabel `transaksiaset`
 --
 ALTER TABLE `transaksiaset`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT untuk tabel `transaksibeli`
