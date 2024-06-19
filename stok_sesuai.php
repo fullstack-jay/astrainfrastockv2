@@ -405,12 +405,16 @@ if(isset($_POST["keluar"])) {
             $resultUpdate = mysqli_query($conn, $sqlUpdate);
 
              if ($resultUpdate) {
+                // Masukkan ke tabel transaksiaset
                 $timestamp = date('Y-m-d H:i:s');
                 $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, nama_barang, kategori, brand, jenis, asetmasuk, asetkeluar, sisa, timestamp, image_data) 
-                                       VALUES ('$namalengkap', '$namabarang','$kategori', '$brand', '$jenis', '$jumlahAsetBaru', 0, '$sisaBaru','$timestamp', '$imageDataPath')";
-                mysqli_query($conn, $sqlInsertTransaksi);
-                echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
-                echo "<script>window.location = 'stok_sesuai';</script>";
+                                       VALUES ('$namaLengkap', '$namabarang', '$kategori', '$brand', '$jenis', 0, '$jumlahAsetBaru', '$sisaBaru', '$timestamp', '$imageDataPath')";
+                if (mysqli_query($conn, $sqlInsertTransaksi)) {
+                    echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
+                    echo "<script>window.location = 'stok_sesuai';</script>";
+                } else {
+                    echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
+                }
             } else {
                 echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
             }
