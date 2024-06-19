@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 
+ <style>
+       img {
+            display: block;
+            margin: 10px;
+            border: 1px solid black;
+        }
+  </style>
+
   <link rel="icon" type="image/png" href="page/images/icons/astra.ico"/>
 <?php
 include "configuration/config_etc.php";
@@ -183,32 +191,6 @@ if ($search != null || $search != "") {
     </div>
 </div>
 
-
-        <script>
-         $("#kode").on("change", function() {
-          var sisa = $("#kode option:selected").attr("sisa");
-
-          $("#sisa").val(sisa);
-      });
-       function sum() {
-              var asetmasuk= parseFloat(document.getElementById('asetmasuk').value) || 0;
-    var asetkeluar = parseFloat(document.getElementById('asetkeluar').value) || 0;
-    var sisaAwal = parseFloat(document.getElementById('sisa').value) || 0;
-
-    var sisaBaru = sisaAwal + asetmasuk - asetkeluar;
-    document.getElementById('sisa').value = sisaBaru;
-       }
-       </script>
-
-       <script>
-$(document).ready(function() {
-    $("#kode").on("change", function() {
-        var nama = $("#kode option:selected").attr("nama");
-        $("#nama").val(nama);
-    });
-});
-</script>
-
         <div class="row">
            <div class="form-group col-md-6 col-xs-12" >
                   <label for="sisa" class="col-sm-3 control-label">Sisa Aset :</label>
@@ -218,10 +200,108 @@ $(document).ready(function() {
                 </div>
         </div>
 
+     <div class="row">
+            <div class="form-group col-md-6 col-xs-12">
+                <label for="upload" class="col-sm-3 control-label">Gambar Aset:</label>
+                <div class="col-sm-9">
+                    <input type="file" id="upload" name="image_data" accept="image/*">
+                    <br>
+                    <img id="preview" src="#" alt="Preview Gambar" style="display: none; max-width: 100%; height: auto; margin-top: 10px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Input tersembunyi untuk menyimpan path file yang diunggah -->
+    <input type="hidden" id="uploaded_image_path" name="uploaded_image_path">
+    <script>
+         $("#kode").on("change", function() {
+          var sisa = $("#kode option:selected").attr("sisa");
+
+          $("#sisa").val(sisa);
+      });
+
+      $(document).ready(function() {
+    $("#kode").on("change", function() {
+        var nama = $("#kode option:selected").attr("nama");
+        $("#nama").val(nama);
+    });
+});
+    function sum() {
+        var asetmasuk= parseFloat(document.getElementById('asetmasuk').value) || 0;
+        var asetkeluar = parseFloat(document.getElementById('asetkeluar').value) || 0;
+        var sisaAwal = parseFloat(document.getElementById('sisa').value) || 0;
+
+        var sisaBaru = sisaAwal + asetmasuk - asetkeluar;
+        document.getElementById('sisa').value = sisaBaru;
+    }
+</script>     
+
+ <script>
+    document.getElementById('upload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const maxWidth = 800;
+                    const maxHeight = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(function(blob) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const preview = document.getElementById('preview');
+                            preview.src = event.target.result;
+                            preview.style.display = 'block';
+
+                            const formData = new FormData();
+                            formData.append('image_data', blob, 'image.jpg');
+
+                            // Upload the image to the server
+                            fetch('upload.php', {
+                                method: 'POST',
+                                body: formData
+                            }).then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    document.getElementById('uploaded_image_path').value = data.file_path;
+                                    alert('Gambar berhasil diunggah');
+                                } else {
+                                    alert('Gagal mengunggah gambar');
+                                }
+                            });
+                        };
+                        reader.readAsDataURL(blob);
+                    }, 'image/jpeg', 0.8);
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 
       <input type="hidden" class="form-control" id="insert" name="insert" value="<?php echo $insert;?>" maxlength="1" >
-
-
               </div>
               <!-- /.box-body -->
 <div class="box-footer" style="margin-top: 10px;">
@@ -231,8 +311,6 @@ $(document).ready(function() {
               <!-- /.box-footer -->
  </form>
 </div>
-
-
 
 
  <?php
@@ -248,6 +326,7 @@ $namalengkap = $_SESSION['nama'];
 if(isset($_POST["masuk"])) {
     $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
     $jumlahAsetBaru = mysqli_real_escape_string($conn, $_POST["jumlah_aset"]);
+    $imageDataPath = mysqli_real_escape_string($conn, $_POST["uploaded_image_path"]);
 
     // Query untuk mendapatkan data awal dari database
     $sql = "SELECT nama, asetmasuk, asetkeluar, sisa, stokmin, kategori, brand, jenis FROM barang WHERE kode='$kode'";
@@ -278,10 +357,9 @@ if(isset($_POST["masuk"])) {
             if ($resultUpdate) {
                 // Masukkan ke tabel transaksiaset
                 $timestamp = date('Y-m-d H:i:s');
-                $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, nama_barang, kategori, brand, jenis, asetmasuk, asetkeluar, sisa, timestamp) 
-                                       VALUES ('$namalengkap', '$namabarang','$kategori', '$brand', '$jenis', '$jumlahAsetBaru', 0, '$sisaBaru','$timestamp')";
+                $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, nama_barang, kategori, brand, jenis, asetmasuk, asetkeluar, sisa, timestamp, image_data) 
+                                       VALUES ('$namalengkap', '$namabarang','$kategori', '$brand', '$jenis', '$jumlahAsetBaru', 0, '$sisaBaru','$timestamp', '$imageDataPath')";
                 mysqli_query($conn, $sqlInsertTransaksi);
-
                 echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
                 echo "<script>window.location = 'stok_sesuai';</script>";
             } else {
@@ -293,9 +371,12 @@ if(isset($_POST["masuk"])) {
     }
 }
 
+
+
 if(isset($_POST["keluar"])) {
     $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
     $jumlahAsetBaru = mysqli_real_escape_string($conn, $_POST["jumlah_aset"]);
+    $imageDataPath = mysqli_real_escape_string($conn, $_POST["uploaded_image_path"]);
 
     // Query untuk mendapatkan data awal dari database
     $sql = "SELECT nama, asetmasuk, asetkeluar, sisa, stokmin, kategori, brand, jenis, sisa FROM barang WHERE kode='$kode'";
@@ -323,13 +404,11 @@ if(isset($_POST["keluar"])) {
             $sqlUpdate = "UPDATE barang SET asetkeluar=asetkeluar+'$jumlahAsetBaru', sisa='$sisaBaru' WHERE kode='$kode'";
             $resultUpdate = mysqli_query($conn, $sqlUpdate);
 
-            if ($resultUpdate) {
-                // Masukkan ke tabel transaksiaset
+             if ($resultUpdate) {
                 $timestamp = date('Y-m-d H:i:s');
-                $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, nama_barang, kategori, brand, jenis, asetmasuk, asetkeluar, sisa, timestamp) 
-                                       VALUES ('$namalengkap', '$namabarang','$kategori', '$brand', '$jenis', 0, '$jumlahAsetBaru', '$sisaBaru', '$timestamp')";
+                $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, nama_barang, kategori, brand, jenis, asetmasuk, asetkeluar, sisa, timestamp, image_data) 
+                                       VALUES ('$namalengkap', '$namabarang','$kategori', '$brand', '$jenis', '$jumlahAsetBaru', 0, '$sisaBaru','$timestamp', '$imageDataPath')";
                 mysqli_query($conn, $sqlInsertTransaksi);
-
                 echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
                 echo "<script>window.location = 'stok_sesuai';</script>";
             } else {
@@ -341,10 +420,6 @@ if(isset($_POST["keluar"])) {
     }
 }
 ?>
-
- 
-
-
 
 <script>
 function myFunction() {
@@ -413,7 +488,6 @@ function sum() {
     document.getElementById('sisa').value = sisaBaru;
 }
 </script>
-
     <script src="dist/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script src="dist/plugins/morris/morris.min.js"></script>

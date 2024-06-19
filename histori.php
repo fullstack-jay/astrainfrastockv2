@@ -10,6 +10,33 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
+
+<style>
+    .enlarged-image {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 80%;
+        max-height: 80%;
+        z-index: 1000;
+        display: none;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+</style>
+
 <body>
 <?php
 include "configuration/config_etc.php";
@@ -87,6 +114,7 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
                                 <th>Aset Keluar</th>
                                 <th>Spare Update</th>
                                 <th>Waktu Update</th>
+                                <th>Gambar Aset</th>
                             </tr>
                         </thead>
                         <tbody>';
@@ -104,6 +132,7 @@ while ($fill = mysqli_fetch_assoc($result)) {
             <td>' . htmlspecialchars(number_format($fill['asetkeluar'], $decimal, $a_decimal, $thousand)) . '</td>
             <td>' . htmlspecialchars(number_format($fill['sisa'], $decimal, $a_decimal, $thousand)) . '</td>
             <td>' . htmlspecialchars($fill['timestamp']) . '</td>
+         <td><img src="' . htmlspecialchars($fill['image_data']) . '" alt="Gambar Aset" class="img-thumbnail" style="max-width: 100px; height: auto; cursor: pointer;" onclick="showImage(this)"></td>
         </tr>';
 }
 
@@ -126,6 +155,26 @@ echo '  </div>
 footer();
 
 ?>
+
+<div class="overlay" id="overlay" onclick="hideImage()"></div>
+<img id="enlargedImage" class="enlarged-image" onclick="hideImage()">
+
+<script>
+    function showImage(img) {
+        var enlargedImage = document.getElementById('enlargedImage');
+        var overlay = document.getElementById('overlay');
+        enlargedImage.src = img.src;
+        enlargedImage.style.display = 'block';
+        overlay.style.display = 'block';
+    }
+
+    function hideImage() {
+        var enlargedImage = document.getElementById('enlargedImage');
+        var overlay = document.getElementById('overlay');
+        enlargedImage.style.display = 'none';
+        overlay.style.display = 'none';
+    }
+</script>
 
 <!-- Letakkan di bagian bawah halaman sebelum tag </body> -->
 <script>
