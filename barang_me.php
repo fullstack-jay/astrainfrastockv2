@@ -31,7 +31,6 @@ menu();
 
 <?php
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
-include "configuration/config_chmod.php";
 $halaman = "barang_me"; // halaman
 $dataapa = "Aset Mechanical Electrical"; // data
 $tabeldatabase = "barang"; // tabel database
@@ -97,7 +96,7 @@ function confirmDeletion(no) {
 
 <!-- BOX INFORMASI -->
 <?php
-if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod == '5' || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user' || $_SESSION['jabatan'] == 'pic') {
+if ($_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user' || $_SESSION['jabatan'] == 'pic') {
     $sqla = "SELECT no, COUNT(*) AS totaldata FROM $forward";
     $hasila = mysqli_query($conn, $sqla);
     $rowa = mysqli_fetch_assoc($hasila);
@@ -114,7 +113,7 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
         <h3 class="box-title"><i class="glyphicon glyphicon-th"></i> <?php echo $dataapa ?> <span class="label label-default"><?php echo $totaldata; ?></span></h3>
     </div>
     <div class="box-body">
-        <?php if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') { ?>
+        <?php if ($_SESSION['jabatan'] == 'admin') { ?>
         <p>
             <button class="btn btn-primary btn-sm" id="importBtn"><i class="fa fa-upload"></i> Import</button>
             <form id="importForm" action="import_barang_me.php" method="POST" enctype="multipart/form-data" style="display: none;">
@@ -126,7 +125,7 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
             <a href="barang_me" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</a>
         </p>
         <?php } ?>
-<?php if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user' || $_SESSION['jabatan'] == 'pic') { ?>
+<?php if ($_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user' || $_SESSION['jabatan'] == 'pic') { ?>
     <p>
             <button id="export-pdf" class="btn btn-danger btn-sm" onclick="window.location.href='export_pdf_me.php'"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
             <button id="export-excel" class="btn btn-success btn-sm" onclick="window.location.href='export_excel.php'"><i class="fa fa-file-excel-o"></i> Export Excel</button>
@@ -164,7 +163,7 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
                         <th>Sisa Spare</th>
                         <th>Minimal Stok</th>
                         <th>Keterangan</th>
-                        <?php if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') { ?>
+                        <?php if ($_SESSION['jabatan'] == 'admin') { ?>
                         <th>Opsi</th>
                         <?php }?>
                     </tr>
@@ -185,10 +184,10 @@ if ($chmod == '1' || $chmod == '2' || $chmod == '3' || $chmod == '4' || $chmod =
                         <td><?php echo mysqli_real_escape_string($conn, number_format($fill['stokmin'], $decimal, $a_decimal, $thousand)); ?></td>
                         <td><?php echo mysqli_real_escape_string($conn, $fill['keterangan']); ?></td>
                         <td>
-                            <?php if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin') { ?>
+                            <?php if ($_SESSION['jabatan'] == 'admin') { ?>
                             <button type="button" class="btn btn-success btn-xs" onclick="window.location.href='add_<?php echo $halaman;?>?no=<?php echo $fill['no']; ?>'">Edit</button>
                             <?php } ?>
-                            <?php if ($chmod >= 4 || $_SESSION['jabatan'] == 'admin') { ?>
+                            <?php if ($_SESSION['jabatan'] == 'admin') { ?>
                             <button type="button" class="btn btn-danger btn-xs" onclick="confirmDeletion(<?php echo $fill['no']; ?>)">Hapus</button>
                             <?php } ?>
                         </td>
