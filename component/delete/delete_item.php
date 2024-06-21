@@ -7,7 +7,6 @@ $forward =$_GET['forward'];
 $no = $_GET['no'];
 $chmod = $_GET['chmod'];
 $forwardpage = $_GET['forwardpage'];
-$nota = $_GET['nota'];
 $jumlah = $_GET['jumlah'];
 $kode = $_GET['kode'];
 $jenis = $_GET['jenis'];
@@ -74,8 +73,6 @@ $cek=1;
   $newkembali= $sqa['bayar']-$newtot;
 
  $up=mysqli_query($conn,"UPDATE bayar SET total='$newtot', kembali='$newkembali', keluar='$newkeluar' WHERE nota='$nota'"); 
-
-$sqq=mysqli_query($conn,"SELECT * FROM transaksimasuk WHERE nota='$nota'");
 
    if(mysqli_num_rows($sqq)<=1){
 

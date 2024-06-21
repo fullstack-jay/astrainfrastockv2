@@ -1,6 +1,5 @@
 <?php
 include "configuration/config_connect.php";
-include "configuration/config_chmod.php";
 
 $queryback = "SELECT * FROM backset";
 $resultback = mysqli_query($conn, $queryback);
@@ -36,23 +35,23 @@ $demo = $rowback["demo"];
 
 
 <?php
-if ($chmenu4 >= 1 || $_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == 'pic') { ?>
+if ($_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == 'pic') { ?>
 
 
 <?php } else {}
 
-if ($chmenu5 >= 1 || $_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == 'pic') { ?>
+if ($_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == 'pic') { ?>
 
 <?php } else {}
 
-if ($chmenu6 >= 1 || $_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == 'pic') { ?>
+if ($_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == 'pic') { ?>
 
     <?php } else {}
 
-if ($chmenu7 >= 1 || $_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == 'pic') { ?>
+if ($_SESSION["jabatan"] == "admin"|| $_SESSION['jabatan'] == 'pic') { ?>
 
 <?php } else {}
-if ($chmenu8 >= 1 || $_SESSION["jabatan"] == "admin" || $_SESSION['jabatan'] == 'pic' || $_SESSION['jabatan'] == 'user') { ?>
+if ($_SESSION["jabatan"] == "admin" || $_SESSION['jabatan'] == 'pic' || $_SESSION['jabatan'] == 'user') { ?>
 
     <li>
     <a href="stok_sesuai"><i class="glyphicon glyphicon-inbox"></i>Penyesuaian Stok Aset</a>
@@ -62,7 +61,7 @@ if ($chmenu8 >= 1 || $_SESSION["jabatan"] == "admin" || $_SESSION['jabatan'] == 
     </li>
   <?php } else {}
 
-if ($chmenu10 >= 1 || $_SESSION["jabatan"] == "admin") { ?>
+if ($_SESSION["jabatan"] == "admin") { ?>
 
 
               <li class="treeview">
