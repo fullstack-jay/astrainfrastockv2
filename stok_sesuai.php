@@ -1,3 +1,7 @@
+<?php 
+
+?>
+
 <!DOCTYPE html>
 
  <style>
@@ -43,7 +47,6 @@ menu();
 
 <?php
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
-include "configuration/config_chmod.php";
 $halaman = "stok_sesuai"; // halaman
 $dataapa = "Penyesuaian Stok Aset"; // data
 $tabeldatabase = "barang"; // tabel database
@@ -107,7 +110,7 @@ if ($search != null || $search != "") {
 
        <!-- BOX INFORMASI -->
     <?php
-  if ($chmod >= 3 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'pic') {
+  if ($_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'pic') {
   ?>
 
 
@@ -130,7 +133,7 @@ if ($search != null || $search != "") {
 
 
 
-    if(($no != null || $no != "") && ($chmod >= 3 || $_SESSION['jabatan'] == 'admin')){
+    if(($no != null || $no != "") && ($_SESSION['jabatan'] == 'admin')){
 
          $sql="select * from $tabeldatabase where no='$no'";
                   $hasil2 = mysqli_query($conn,$sql);
@@ -312,16 +315,85 @@ if ($search != null || $search != "") {
  </form>
 </div>
 
-
- <?php
-session_start(); // Mulai sesi di awal script
+<?php
+// Mulai sesi jika belum dimulai
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Pastikan pengguna sudah login
 if (!isset($_SESSION['nama'])) {
     die("Anda harus login untuk melakukan operasi ini.");
 }
 
-$namalengkap = $_SESSION['nama'];
+$namaLengkap = $_SESSION['nama'];
+
+if(isset($_POST["keluar"])) {
+    $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
+    $jumlahAsetBaru = mysqli_real_escape_string($conn, $_POST["jumlah_aset"]);
+    $imageDataPath = mysqli_real_escape_string($conn, $_POST["uploaded_image_path"]);
+
+    // Query untuk mendapatkan data awal dari database
+    $sql = "SELECT nama, asetmasuk, asetkeluar, sisa, stokmin, kategori, brand, jenis FROM barang WHERE kode='$kode'";
+    $result = mysqli_query($conn, $sql);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $asetmasukLama = $row['asetmasuk'];
+        $asetkeluarLama = $row['asetkeluar'];
+        $sisaAwal = $row['sisa'];
+        $stokmin = $row['stokmin'];
+        $kategori = $row['kategori'];
+        $namabarang = $row['nama'];
+        $brand = $row['brand'];
+        $jenis = $row['jenis'];
+        
+        // Hitung sisa baru setelah penyesuaian
+        $sisaBaru = $sisaAwal - $jumlahAsetBaru;
+
+        // Periksa apakah stok baru setelah penyesuaian kurang dari stokmin
+        if ($sisaBaru < $stokmin) {
+            echo "<script>alert('Stok setelah penyesuaian kurang dari stok minimum!');</script>";
+        } else {
+            // Lanjutkan dengan proses penyimpanan data
+            $sqlUpdate = "UPDATE barang SET asetkeluar=asetkeluar+'$jumlahAsetBaru', sisa='$sisaBaru' WHERE kode='$kode'";
+            $resultUpdate = mysqli_query($conn, $sqlUpdate);
+
+            if ($resultUpdate) {
+                // Masukkan ke tabel transaksiaset
+                $timestamp = date('Y-m-d H:i:s');
+                $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, nama_barang, kategori, brand, jenis, asetmasuk, asetkeluar, sisa, timestamp, image_data) 
+                                       VALUES ('$namaLengkap', '$namabarang', '$kategori', '$brand', '$jenis', 0, '$jumlahAsetBaru', '$sisaBaru', '$timestamp', '$imageDataPath')";
+                if (mysqli_query($conn, $sqlInsertTransaksi)) {
+                    echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
+                    echo "<script>window.location = 'stok_sesuai';</script>";
+                } else {
+                    echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
+                }
+            } else {
+                echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
+            }
+        }
+    } else {
+        echo "<script>alert('Gagal mendapatkan data stok awal dan stok minimum!');</script>";
+    }
+}
+?>
+
+ 
+
+<?php
+// Mulai sesi jika belum dimulai
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Pastikan pengguna sudah login
+if (!isset($_SESSION['nama'])) {
+    die("Anda harus login untuk melakukan operasi ini.");
+}
+
+$namaLengkap = $_SESSION['nama'];
 
 if(isset($_POST["masuk"])) {
     $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
@@ -358,7 +430,7 @@ if(isset($_POST["masuk"])) {
                 // Masukkan ke tabel transaksiaset
                 $timestamp = date('Y-m-d H:i:s');
                 $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, nama_barang, kategori, brand, jenis, asetmasuk, asetkeluar, sisa, timestamp, image_data) 
-                                       VALUES ('$namalengkap', '$namabarang','$kategori', '$brand', '$jenis', '$jumlahAsetBaru', 0, '$sisaBaru','$timestamp', '$imageDataPath')";
+                                       VALUES ('$namaLengkap', '$namabarang','$kategori', '$brand', '$jenis', '$jumlahAsetBaru', 0, '$sisaBaru','$timestamp', '$imageDataPath')";
                 mysqli_query($conn, $sqlInsertTransaksi);
                 echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
                 echo "<script>window.location = 'stok_sesuai';</script>";
@@ -370,60 +442,11 @@ if(isset($_POST["masuk"])) {
         echo "<script>alert('Gagal mendapatkan data stok awal dan stok minimum!');</script>";
     }
 }
-
-
-
-if(isset($_POST["keluar"])) {
-    $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
-    $jumlahAsetBaru = mysqli_real_escape_string($conn, $_POST["jumlah_aset"]);
-    $imageDataPath = mysqli_real_escape_string($conn, $_POST["uploaded_image_path"]);
-
-    // Query untuk mendapatkan data awal dari database
-    $sql = "SELECT nama, asetmasuk, asetkeluar, sisa, stokmin, kategori, brand, jenis, sisa FROM barang WHERE kode='$kode'";
-    $result = mysqli_query($conn, $sql);
-    
-    if ($result && mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        $asetmasukLama = $row['asetmasuk'];
-        $asetkeluarLama = $row['asetkeluar'];
-        $sisaAwal = $row['sisa'];
-        $stokmin = $row['stokmin'];
-        $kategori = $row['kategori'];
-        $namabarang = $row['nama'];
-        $brand = $row['brand'];
-        $jenis = $row['jenis'];
-        
-        // Hitung sisa baru setelah penyesuaian
-        $sisaBaru = $sisaAwal - $jumlahAsetBaru;
-
-        // Periksa apakah stok baru setelah penyesuaian kurang dari stokmin
-        if ($sisaBaru < $stokmin) {
-            echo "<script>alert('Stok setelah penyesuaian kurang dari stok minimum!');</script>";
-        } else {
-            // Lanjutkan dengan proses penyimpanan data
-            $sqlUpdate = "UPDATE barang SET asetkeluar=asetkeluar+'$jumlahAsetBaru', sisa='$sisaBaru' WHERE kode='$kode'";
-            $resultUpdate = mysqli_query($conn, $sqlUpdate);
-
-             if ($resultUpdate) {
-                // Masukkan ke tabel transaksiaset
-                $timestamp = date('Y-m-d H:i:s');
-                $sqlInsertTransaksi = "INSERT INTO transaksiaset (nama_lengkap, nama_barang, kategori, brand, jenis, asetmasuk, asetkeluar, sisa, timestamp, image_data) 
-                                       VALUES ('$namaLengkap', '$namabarang', '$kategori', '$brand', '$jenis', 0, '$jumlahAsetBaru', '$sisaBaru', '$timestamp', '$imageDataPath')";
-                if (mysqli_query($conn, $sqlInsertTransaksi)) {
-                    echo "<script>alert('Berhasil, Data telah disimpan!');</script>";
-                    echo "<script>window.location = 'stok_sesuai';</script>";
-                } else {
-                    echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
-                }
-            } else {
-                echo "<script>alert('Gagal, Data gagal disimpan!');</script>";
-            }
-        }
-    } else {
-        echo "<script>alert('Gagal mendapatkan data stok awal dan stok minimum!');</script>";
-    }
-}
 ?>
+
+
+
+
 
 <script>
 function myFunction() {
